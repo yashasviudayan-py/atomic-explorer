@@ -1,0 +1,126 @@
+@import "tailwindcss";
+
+/**
+ * Design tokens for the Atomic Explorer "dark space / science" theme.
+ * Exposed to Tailwind v4 via @theme so they're usable as utilities
+ * (e.g. text-accent, bg-surface) and as CSS variables.
+ */
+@theme {
+  --color-space-950: #05060f;
+  --color-space-900: #0a0c1a;
+  --color-space-800: #11142a;
+  --color-surface: #12152e;
+  --color-border-subtle: #232746;
+
+  --color-accent: #38bdf8;
+  --color-accent-violet: #a855f7;
+  --color-accent-pink: #f472b6;
+
+  --color-foreground: #e7ecff;
+  --color-muted: #9aa3c7;
+
+  --font-sans:
+    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
+    Arial, sans-serif;
+
+  --animate-orbit-slow: orbit 18s linear infinite;
+  --animate-orbit-medium: orbit 12s linear infinite;
+  --animate-orbit-fast: orbit 7s linear infinite;
+  --animate-float: float 6s ease-in-out infinite;
+}
+
+@keyframes orbit {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--color-space-950);
+  color: var(--color-foreground);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  min-height: 100vh;
+}
+
+/**
+ * Ambient space backdrop: layered radial gradients that read as distant
+ * nebulae. Fixed so it stays put while content scrolls over it.
+ */
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(
+      60rem 60rem at 12% -10%,
+      rgba(56, 189, 248, 0.12),
+      transparent 60%
+    ),
+    radial-gradient(
+      50rem 50rem at 105% 10%,
+      rgba(168, 85, 247, 0.14),
+      transparent 55%
+    ),
+    radial-gradient(
+      45rem 45rem at 50% 120%,
+      rgba(244, 114, 182, 0.1),
+      transparent 60%
+    ),
+    var(--color-space-950);
+}
+
+/* Subtle starfield using two tiled radial-gradient dot layers. */
+.app-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 70% 60%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 40% 80%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 85% 25%, rgba(255, 255, 255, 0.3), transparent);
+  background-size: 240px 240px;
+  opacity: 0.6;
+}
+
+/* Reusable glassmorphism surface. */
+.glass-panel {
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0.02)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(14px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
