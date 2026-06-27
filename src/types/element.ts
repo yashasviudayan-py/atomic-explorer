@@ -1,10 +1,8 @@
 /**
  * Core domain types for Atomic Explorer.
  *
- * These describe the shape of element data the app will consume. The actual
- * dataset (local JSON/TS) lands in a later phase; defining the contract now
- * keeps the periodic table, element detail pages, and atom visualization in
- * sync as they are built.
+ * These describe the shape of the local element dataset consumed by the
+ * periodic table, element detail pages, and (later) the atom visualization.
  */
 
 /** Broad chemical category, used for color-coding the periodic table. */
@@ -14,67 +12,42 @@ export type ElementCategory =
   | "transition-metal"
   | "post-transition-metal"
   | "metalloid"
-  | "nonmetal"
-  | "halogen"
+  | "reactive-nonmetal"
   | "noble-gas"
   | "lanthanide"
   | "actinide"
   | "unknown";
 
-/** Standard temperature-and-pressure phase of matter. */
-export type ElementPhase = "solid" | "liquid" | "gas" | "unknown";
+/** Orbital block the element's valence electrons occupy. */
+export type ElementBlock = "s" | "p" | "d" | "f";
 
 /**
- * Electron shell occupancy, ordered from the innermost shell outward.
- * e.g. Sodium (Na) => [2, 8, 1].
- */
-export type ShellConfiguration = number[];
-
-/**
- * A single chemical element. Optional fields capture data that is not defined
- * for every element (synthetic elements, for instance, often lack measured
- * physical properties).
- */
-export interface Element {
-  /** Atomic number (number of protons). */
-  atomicNumber: number;
-  /** Chemical symbol, e.g. "He". Used as the route param in /elements/[symbol]. */
-  symbol: string;
-  /** Full element name, e.g. "Helium". */
-  name: string;
-  /** Standard atomic weight (u). */
-  atomicMass: number;
-  category: ElementCategory;
-  phase: ElementPhase;
-
-  /** Group (column) in the periodic table, 1–18. Null for f-block placement. */
-  group: number | null;
-  /** Period (row) in the periodic table, 1–7. */
-  period: number;
-
-  /** Electron count per shell, innermost first. Drives the atom visualization. */
-  shells: ShellConfiguration;
-  /** Standard electron configuration string, e.g. "1s2 2s2 2p6". */
-  electronConfiguration?: string;
-
-  /** Short, human-friendly summary shown on the detail page. */
-  summary?: string;
-  /** Notable scientific facts surfaced alongside the visualization. */
-  facts?: string[];
-
-  /** Brand/accent color used for glow and highlight effects (hex). */
-  accentColor?: string;
-}
-
-/**
- * Derived atomic composition for the visualization layer.
+ * A single chemical element.
  *
- * Neutron count is the rounded mass minus the proton count for the most common
- * isotope; it is computed rather than stored so the data stays compact.
+ * `x`/`y` are 1-based grid coordinates used to lay the element out on the
+ * periodic table (18 columns wide; lanthanides/actinides sit on rows 9/10).
+ * `shells` lists electron count per shell, innermost first, e.g. Na => [2, 8, 1].
  */
-export interface AtomicComposition {
-  protons: number;
-  neutrons: number;
-  electrons: number;
-  shells: ShellConfiguration;
-}
+export type Element = {
+  atomicNumber: number;
+  symbol: string;
+  name: string;
+  /** Standard atomic weight (u). Bracketed for elements with no stable isotope. */
+  atomicMass: string;
+  category: ElementCategory;
+  /** Group (column) 1–18, or null for f-block (lanthanides/actinides). */
+  group: number | null;
+  /** Period (row) 1–7. */
+  period: number;
+  block: ElementBlock;
+  /** 1-based column for table layout. */
+  x: number;
+  /** 1-based row for table layout (9 = lanthanides, 10 = actinides). */
+  y: number;
+  /** Standard electron configuration, noble-gas shorthand, e.g. "[Ne] 3s2 3p1". */
+  electronConfiguration: string;
+  /** Electron count per shell, innermost first. */
+  shells: number[];
+  /** Short, one-sentence summary shown in previews and on the detail page. */
+  summary: string;
+};
