@@ -16,25 +16,54 @@ interface NucleusProps {
   neutrons: number;
   selected: SelectedParticle;
   onSelect: (type: ParticleType) => void;
+  /** Emissive multiplier for nucleons (>1 in particle-focus mode). */
+  nucleonEmphasis?: number;
+  /** Slightly enlarge the nucleus in particle-focus mode. */
+  emphasized?: boolean;
 }
 
 /**
  * The atomic nucleus: a deterministic packed cluster of proton and neutron
  * spheres wrapped in a soft central glow. Positions come from
- * {@link getNucleusParticles}, so they never shift between renders.
+ * {@link getNucleusParticles}, so they never shift between renders. The counts
+ * received here are already capped for performance (see
+ * {@link getNucleusDisplayCounts}); the info panel reports the true totals.
  */
-export function Nucleus({ protons, neutrons, selected, onSelect }: NucleusProps) {
+export function Nucleus({
+  protons,
+  neutrons,
+  selected,
+  onSelect,
+  nucleonEmphasis = 1,
+  emphasized = false,
+}: NucleusProps) {
   const particles = useMemo(
     () => getNucleusParticles(protons, neutrons),
     [protons, neutrons],
   );
 
+  const glowRadius = Math.max(0.6, 0.55 * Math.cbrt(protons + neutrons));
+
   return (
-    <group>
-      {/* Ambient nucleus glow */}
+    <group scale={emphasized ? 1.12 : 1}>
+      {/* Ambient nucleus glow (two layers for a denser, dimensional core). */}
       <mesh>
-        <sphereGeometry args={[Math.max(0.6, 0.55 * Math.cbrt(protons + neutrons)), 24, 24]} />
-        <meshBasicMaterial color="#ff7aa0" transparent opacity={0.06} depthWrite={false} />
+        <sphereGeometry args={[glowRadius, 24, 24]} />
+        <meshBasicMaterial
+          color="#ff7aa0"
+          transparent
+          opacity={(emphasized ? 0.1 : 0.06) * nucleonEmphasis}
+          depthWrite={false}
+        />
+      </mesh>
+      <mesh>
+        <sphereGeometry args={[glowRadius * 0.62, 20, 20]} />
+        <meshBasicMaterial
+          color="#ffd2dc"
+          transparent
+          opacity={0.05 * nucleonEmphasis}
+          depthWrite={false}
+        />
       </mesh>
 
       {particles.map((particle) =>
@@ -44,6 +73,7 @@ export function Nucleus({ protons, neutrons, selected, onSelect }: NucleusProps)
             position={particle.position}
             selected={selected === "proton"}
             onSelect={() => onSelect("proton")}
+            emphasis={nucleonEmphasis}
           />
         ) : (
           <Neutron
@@ -51,6 +81,7 @@ export function Nucleus({ protons, neutrons, selected, onSelect }: NucleusProps)
             position={particle.position}
             selected={selected === "neutron"}
             onSelect={() => onSelect("neutron")}
+            emphasis={nucleonEmphasis}
           />
         ),
       )}

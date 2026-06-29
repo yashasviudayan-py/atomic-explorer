@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ELEMENTS, getElementBySymbol } from "@/data/elements";
 import { CATEGORY_META } from "@/lib/elementCategories";
 import { AtomViewerClient } from "@/components/atom/AtomViewerClient";
-import { getNeutronCount } from "@/components/atom/atomUtils";
+import { ModelNotice } from "@/components/atom/ModelNotice";
 
 interface ElementDetailPageProps {
   // In the Next.js App Router (v15+), dynamic route params are async.
@@ -41,12 +41,17 @@ export default async function ElementDetailPage({
   }
 
   const meta = CATEGORY_META[element.category];
-  const protons = element.atomicNumber;
-  const electrons = element.atomicNumber;
-  const neutrons = getNeutronCount(element.atomicNumber, element.atomicMass);
 
   return (
-    <article className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <article className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+      {/* Tasteful category-accent radial glow anchoring the dashboard. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[28rem] opacity-30"
+        style={{
+          background: `radial-gradient(60rem 28rem at 50% -10%, ${meta.accent}22, transparent 70%)`,
+        }}
+      />
       <Link
         href="/elements"
         className="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
@@ -107,7 +112,8 @@ export default async function ElementDetailPage({
         </div>
       </header>
 
-      {/* 3D Atom Explorer */}
+      {/* 3D Atom Explorer — viewer carries the isotope selector and the
+          isotope-aware particle information panel. */}
       <section className="mt-8">
         <SectionHeading
           eyebrow="3D Atom Explorer"
@@ -117,27 +123,11 @@ export default async function ElementDetailPage({
         <div className="mt-4">
           <AtomViewerClient element={element} />
         </div>
+        <ModelNotice className="mt-3" />
       </section>
 
-      {/* Composition + configuration */}
+      {/* Electron configuration + shell distribution */}
       <section className="mt-8 grid gap-4 lg:grid-cols-2">
-        {/* Composition */}
-        <div className="glass-panel rounded-2xl p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
-            Atomic composition
-          </h2>
-          <div className="mt-3 grid grid-cols-3 gap-3">
-            <CompositionStat label="Protons" value={protons} dot="#ff5d7e" />
-            <CompositionStat label="Neutrons" value={neutrons} dot="#5fc8ff" />
-            <CompositionStat label="Electrons" value={electrons} dot="#cdeeff" />
-          </div>
-          <p className="mt-3 text-xs leading-relaxed text-muted">
-            Neutral atom: electrons equal protons. Neutron count is approximated
-            from the standard atomic mass ({element.atomicMass}) — isotope
-            selection arrives in a later phase.
-          </p>
-        </div>
-
         {/* Electron configuration */}
         <div className="glass-panel rounded-2xl p-5">
           <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
@@ -146,6 +136,18 @@ export default async function ElementDetailPage({
           <p className="mt-2 font-mono text-lg text-foreground">
             {element.electronConfiguration}
           </p>
+          <p className="mt-3 text-xs leading-relaxed text-muted">
+            A neutral {element.name} atom has {element.atomicNumber} electron
+            {element.atomicNumber === 1 ? "" : "s"} (equal to its proton count).
+            Choosing a different isotope above changes only the neutron count.
+          </p>
+        </div>
+
+        {/* Shell distribution */}
+        <div className="glass-panel rounded-2xl p-5">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
+            Shell distribution
+          </h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {element.shells.map((count, index) => (
               <span
@@ -159,6 +161,10 @@ export default async function ElementDetailPage({
               </span>
             ))}
           </div>
+          <p className="mt-3 text-xs leading-relaxed text-muted">
+            Electrons fill inner shells before outer ones; the outermost
+            (valence) shell drives the element&apos;s chemistry.
+          </p>
         </div>
       </section>
 
@@ -222,31 +228,6 @@ function Chip({ label, value }: { label: string; value: string }) {
       <span className="uppercase tracking-wide text-muted/70">{label}</span>
       <span className="font-mono text-foreground">{value}</span>
     </span>
-  );
-}
-
-function CompositionStat({
-  label,
-  value,
-  dot,
-}: {
-  label: string;
-  value: number;
-  dot: string;
-}) {
-  return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] px-3 py-3 text-center">
-      <span
-        className="mx-auto mb-1.5 block h-2.5 w-2.5 rounded-full"
-        style={{ background: dot, boxShadow: `0 0 12px ${dot}` }}
-      />
-      <span className="block font-mono text-2xl font-semibold text-foreground">
-        {value}
-      </span>
-      <span className="block text-[0.65rem] uppercase tracking-wide text-muted">
-        {label}
-      </span>
-    </div>
   );
 }
 
