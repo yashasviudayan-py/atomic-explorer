@@ -23,6 +23,10 @@ interface ElectronShellProps {
   onSelect: (type: ParticleType) => void;
   /** Animation speed multiplier (0 = paused). */
   animationSpeed: number;
+  /** Emphasis multiplier for electrons (1 = neutral, >1 = shell-focus). */
+  electronEmphasis?: number;
+  /** Whether the orbit ring should read brighter (shell-focus mode). */
+  ringEmphasis?: boolean;
 }
 
 /**
@@ -37,6 +41,8 @@ export function ElectronShell({
   selected,
   onSelect,
   animationSpeed,
+  electronEmphasis = 1,
+  ringEmphasis = false,
 }: ElectronShellProps) {
   const spinRef = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
@@ -91,7 +97,15 @@ export function ElectronShell({
         <meshBasicMaterial
           color={color}
           transparent
-          opacity={isSelected ? 0.85 : hovered ? 0.6 : 0.32}
+          opacity={
+            isSelected
+              ? 0.85
+              : hovered
+                ? 0.6
+                : ringEmphasis
+                  ? 0.5
+                  : 0.32
+          }
           depthWrite={false}
         />
       </mesh>
@@ -104,6 +118,7 @@ export function ElectronShell({
             position={electron.position}
             selected={selected === "electron"}
             onSelect={() => onSelect("electron")}
+            emphasis={electronEmphasis}
           />
         ))}
       </group>

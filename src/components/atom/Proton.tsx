@@ -9,13 +9,15 @@ interface ProtonProps {
   /** Highlighted when the proton particle type is selected. */
   selected: boolean;
   onSelect: () => void;
+  /** Emissive multiplier for visual-mode emphasis (1 = neutral). */
+  emphasis?: number;
 }
 
 /**
  * A single proton: a small warm-rose glowing sphere clustered in the nucleus.
  * Clicking it selects the "proton" info panel; hovering shows a pointer cursor.
  */
-export function Proton({ position, selected, onSelect }: ProtonProps) {
+export function Proton({ position, selected, onSelect, emphasis = 1 }: ProtonProps) {
   const [hovered, setHovered] = useState(false);
   const { color, emissive } = PARTICLE_COLORS.proton;
 
@@ -47,7 +49,7 @@ export function Proton({ position, selected, onSelect }: ProtonProps) {
       <meshStandardMaterial
         color={color}
         emissive={emissive}
-        emissiveIntensity={selected ? 2.2 : hovered ? 1.6 : 1.1}
+        emissiveIntensity={(selected ? 2.2 : hovered ? 1.6 : 1.1) * emphasis}
         roughness={0.35}
         metalness={0.1}
       />

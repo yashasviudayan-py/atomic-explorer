@@ -9,6 +9,8 @@ interface ElectronProps {
   /** Highlighted when the electron particle type is selected. */
   selected: boolean;
   onSelect: () => void;
+  /** Emissive/glow multiplier for visual-mode emphasis (1 = neutral). */
+  emphasis?: number;
 }
 
 /**
@@ -17,7 +19,7 @@ interface ElectronProps {
  * {@link ElectronShell}) for performance — this component only owns appearance
  * and interaction, so there is no per-electron `useFrame`.
  */
-export function Electron({ position, selected, onSelect }: ElectronProps) {
+export function Electron({ position, selected, onSelect, emphasis = 1 }: ElectronProps) {
   const [hovered, setHovered] = useState(false);
   const { color, emissive } = PARTICLE_COLORS.electron;
 
@@ -52,18 +54,18 @@ export function Electron({ position, selected, onSelect }: ElectronProps) {
         <meshStandardMaterial
           color={color}
           emissive={emissive}
-          emissiveIntensity={selected ? 3 : hovered ? 2.4 : 1.8}
+          emissiveIntensity={(selected ? 3 : hovered ? 2.4 : 1.8) * emphasis}
           roughness={0.2}
           metalness={0}
         />
       </mesh>
       {/* Soft glow halo — a larger translucent sphere reads as a faint trail. */}
-      <mesh scale={active ? 2.4 : 2}>
+      <mesh scale={(active ? 2.4 : 2) * (emphasis > 1 ? 1.15 : 1)}>
         <sphereGeometry args={[ELECTRON_RADIUS, 12, 12]} />
         <meshBasicMaterial
           color={emissive}
           transparent
-          opacity={active ? 0.22 : 0.12}
+          opacity={Math.min(0.4, (active ? 0.22 : 0.12) * emphasis)}
           depthWrite={false}
         />
       </mesh>

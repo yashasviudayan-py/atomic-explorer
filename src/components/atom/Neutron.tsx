@@ -9,13 +9,15 @@ interface NeutronProps {
   /** Highlighted when the neutron particle type is selected. */
   selected: boolean;
   onSelect: () => void;
+  /** Emissive multiplier for visual-mode emphasis (1 = neutral). */
+  emphasis?: number;
 }
 
 /**
  * A single neutron: a cool cyan-blue glowing sphere clustered in the nucleus.
  * Clicking it selects the "neutron" info panel; hovering shows a pointer cursor.
  */
-export function Neutron({ position, selected, onSelect }: NeutronProps) {
+export function Neutron({ position, selected, onSelect, emphasis = 1 }: NeutronProps) {
   const [hovered, setHovered] = useState(false);
   const { color, emissive } = PARTICLE_COLORS.neutron;
 
@@ -47,7 +49,7 @@ export function Neutron({ position, selected, onSelect }: NeutronProps) {
       <meshStandardMaterial
         color={color}
         emissive={emissive}
-        emissiveIntensity={selected ? 2.2 : hovered ? 1.6 : 0.9}
+        emissiveIntensity={(selected ? 2.2 : hovered ? 1.6 : 0.9) * emphasis}
         roughness={0.4}
         metalness={0.1}
       />
