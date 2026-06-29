@@ -7,14 +7,28 @@
  * the camera and shell radii defined below.
  *
  * This is an educational Bohr model, not a quantum-accurate simulation.
- * Isotope selection and true orbitals arrive in later phases.
+ * Real electron behaviour is described by quantum-mechanical probability
+ * orbitals; the orbiting shells here are a readable teaching abstraction.
  */
+
+import type { Element } from "@/types/element";
+import type { Isotope } from "@/types/isotope";
+import { ISOTOPE_DATA } from "@/data/isotopes";
 
 /** A clickable particle category surfaced in the info panel. */
 export type ParticleType = "proton" | "neutron" | "electron" | "shell";
 
 /** Currently inspected particle, or `null` for the general overview. */
 export type SelectedParticle = ParticleType | null;
+
+/**
+ * Visual emphasis mode for the 3D scene. All modes show the same educational
+ * Bohr atom; they only shift which parts are emphasised.
+ * - `bohr`: balanced, textbook view.
+ * - `particle-focus`: nucleus protons/neutrons slightly emphasised.
+ * - `shell-focus`: orbit rings and electrons slightly emphasised.
+ */
+export type AtomVisualMode = "bohr" | "particle-focus" | "shell-focus";
 
 /** One nucleon with a fixed, deterministic position inside the nucleus. */
 export interface NucleusParticle {
@@ -55,43 +69,111 @@ export const SHELL_BASE_RADIUS = 2.6;
 export const SHELL_GAP = 1.25;
 
 /**
- * Cap on nucleons actually rendered. Heavy atoms (e.g. uranium ≈ 238) would
- * otherwise spawn hundreds of meshes; we show a representative cluster while
- * the info panel always reports the true counts.
+ * Cap on nucleons actually rendered. Nuclei up to this size show every
+ * individual nucleon; larger nuclei (e.g. uranium ≈ 238) would otherwise spawn
+ * hundreds of meshes, so we show a representative cluster of this many
+ * particles while the info panel always reports the true counts.
  */
-export const MAX_NUCLEUS_PARTICLES = 96;
+export const MAX_NUCLEUS_PARTICLES = 80;
 
-/** Animation-speed presets exposed by the controls panel. */
-export const SPEED_PRESETS = {
-  paused: 0,
-  slow: 0.4,
-  normal: 1,
-  fast: 2.2,
-} as const;
+/** Discrete animation-speed multipliers exposed by the controls panel. */
+export const SPEED_OPTIONS = [0, 0.5, 1, 1.5, 2] as const;
 
-export type SpeedPreset = keyof typeof SPEED_PRESETS;
-
-export const SPEED_ORDER: SpeedPreset[] = ["paused", "slow", "normal", "fast"];
+/** A selectable animation-speed multiplier. */
+export type SpeedOption = (typeof SPEED_OPTIONS)[number];
 
 /**
- * Pull a sensible numeric mass out of a standard-atomic-weight string.
- * Handles plain decimals ("1.008"), bracketed most-stable isotopes ("[98]"),
- * and stray characters. Returns 0 when nothing numeric is found.
+ * Parse a numeric mass out of a standard-atomic-weight string.
+ * Handles plain decimals ("1.008", "12.011"), bracketed most-stable isotopes
+ * ("[98]", "[294]"), and stray characters. Returns `null` when nothing
+ * numeric can be found, so callers can decide how to fall back.
  */
-export function getApproximateMassNumber(atomicMass: string): number {
+export function parseAtomicMass(atomicMass: string): number | null {
   const match = atomicMass.match(/-?\d+(?:\.\d+)?/);
-  if (!match) return 0;
+  if (!match) return null;
   const value = Number.parseFloat(match[0]);
-  return Number.isFinite(value) ? Math.round(value) : 0;
+  return Number.isFinite(value) ? value : null;
+}
+
+/**
+ * Best-effort mass number for an element. Uses the parsed standard atomic mass
+ * when available, otherwise falls back to roughly twice the atomic number
+ * (a reasonable approximation for light-to-mid elements). Never returns less
+ * than the atomic number, so neutron counts can't go negative.
+ */
+export function getApproximateMassNumber(
+  atomicMass: string,
+  atomicNumber: number,
+): number {
+  const parsed = parseAtomicMass(atomicMass);
+  const massNumber =
+    parsed === null ? atomicNumber * 2 : Math.round(parsed);
+  return Math.max(atomicNumber, massNumber);
 }
 
 /**
  * Approximate neutron count for a neutral atom: rounded mass number minus the
- * proton count, clamped to at least 0. Temporary until isotope selection lands.
+ * proton count, clamped to at least 0.
  */
 export function getNeutronCount(atomicNumber: number, atomicMass: string): number {
-  const massNumber = getApproximateMassNumber(atomicMass);
+  const massNumber = getApproximateMassNumber(atomicMass, atomicNumber);
   return Math.max(0, massNumber - atomicNumber);
+}
+
+/**
+ * Generate an approximate fallback isotope for elements without curated data,
+ * derived from the rounded standard atomic mass. Always flagged
+ * `isApproximate` and worded carefully so the UI never presents it as exact.
+ * Elements with a bracketed atomic mass (no stable isotope) are marked
+ * unstable.
+ */
+export function getFallbackIsotope(element: Element): Isotope {
+  const protons = element.atomicNumber;
+  const massNumber = getApproximateMassNumber(element.atomicMass, protons);
+  const neutrons = Math.max(0, massNumber - protons);
+  const noStableIsotope = element.atomicMass.trim().startsWith("[");
+  return {
+    symbol: `${element.symbol}-${massNumber}`,
+    elementSymbol: element.symbol,
+    massNumber,
+    protons,
+    neutrons,
+    electrons: protons,
+    label: `${element.name}-${massNumber}`,
+    isStable: !noStableIsotope,
+    isApproximate: true,
+    description: noStableIsotope
+      ? `Approximate model. ${element.name} has no stable isotope; this representative nucleus is estimated from its standard atomic mass (${element.atomicMass}).`
+      : `Approximate model: a representative ${element.name} nucleus estimated from the standard atomic mass (${element.atomicMass}). Curated isotope data for this element isn't available yet.`,
+  };
+}
+
+/**
+ * All isotopes to offer for an element: curated data when present (ordered by
+ * mass number), otherwise a single approximate fallback isotope.
+ */
+export function getIsotopesForElement(element: Element): Isotope[] {
+  const curated = ISOTOPE_DATA[element.symbol];
+  if (curated && curated.length > 0) return curated;
+  return [getFallbackIsotope(element)];
+}
+
+/** Human-readable label for an isotope, e.g. "Carbon-12". */
+export function formatIsotopeLabel(isotope: Isotope): string {
+  return isotope.label;
+}
+
+/** Particle counts for a neutral atom of the given isotope. */
+export function getParticleCountsFromIsotope(isotope: Isotope): {
+  protons: number;
+  neutrons: number;
+  electrons: number;
+} {
+  return {
+    protons: isotope.protons,
+    neutrons: isotope.neutrons,
+    electrons: isotope.electrons,
+  };
 }
 
 /**
