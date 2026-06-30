@@ -1,8 +1,11 @@
 "use client";
 
-import { AtomVisualMode, SPEED_OPTIONS, SpeedOption } from "./atomUtils";
+import type { AtomicModelMode, AtomVisualMode } from "./atomTypes";
+import { SPEED_OPTIONS, SpeedOption } from "./atomUtils";
 
 interface AtomControlsPanelProps {
+  atomicModelMode: AtomicModelMode;
+  onModelModeChange: (mode: AtomicModelMode) => void;
   showLabels: boolean;
   onToggleLabels: () => void;
   paused: boolean;
@@ -15,18 +18,43 @@ interface AtomControlsPanelProps {
   accent: string;
 }
 
-const VISUAL_MODES: { mode: AtomVisualMode; label: string }[] = [
-  { mode: "bohr", label: "Educational Bohr" },
-  { mode: "particle-focus", label: "Particle Focus" },
-  { mode: "shell-focus", label: "Shell Focus" },
+interface ModelDef {
+  mode: AtomicModelMode;
+  label: string;
+  hint: string;
+}
+
+const MODELS: ModelDef[] = [
+  { mode: "bohr", label: "Educational Bohr", hint: "Shells & electrons" },
+  { mode: "quantum", label: "Quantum Cloud", hint: "Probability orbitals" },
 ];
 
+/** Visual-emphasis presets available per model. */
+const VISUAL_MODES: Record<
+  AtomicModelMode,
+  { mode: AtomVisualMode; label: string }[]
+> = {
+  bohr: [
+    { mode: "balanced", label: "Balanced" },
+    { mode: "particle-focus", label: "Particle Focus" },
+    { mode: "shell-focus", label: "Shell Focus" },
+  ],
+  quantum: [
+    { mode: "balanced", label: "Balanced" },
+    { mode: "particle-focus", label: "Particle Focus" },
+    { mode: "orbital-focus", label: "Orbital Focus" },
+  ],
+};
+
 /**
- * Glass control bar for the atom viewer: label toggle, pause/play, animation
- * speed presets, a visual-mode switch, and reset-view. Pure DOM (lives outside
- * the Canvas) so it can use the app's Tailwind theme directly.
+ * Glass control bar for the atom viewer. A prominent model switch (Bohr vs
+ * Quantum Cloud) sits on top, followed by playback, label toggle, animation
+ * speed presets, a model-aware visual-emphasis switch, and reset-view. Pure DOM
+ * (lives outside the Canvas) so it can use the app's Tailwind theme directly.
  */
 export function AtomControlsPanel({
+  atomicModelMode,
+  onModelModeChange,
   showLabels,
   onToggleLabels,
   paused,
@@ -38,9 +66,47 @@ export function AtomControlsPanel({
   onReset,
   accent,
 }: AtomControlsPanelProps) {
+  const visualModes = VISUAL_MODES[atomicModelMode];
+
   return (
     <div className="glass-panel flex flex-col gap-3 rounded-2xl px-4 py-3">
-      {/* Row 1: playback + display */}
+      {/* Model switch — the most important control, given extra weight. */}
+      <div className="flex flex-col gap-2">
+        <span className="text-xs uppercase tracking-wide text-muted">Model</span>
+        <div className="grid grid-cols-2 gap-2">
+          {MODELS.map(({ mode, label, hint }) => {
+            const active = mode === atomicModelMode;
+            return (
+              <button
+                key={mode}
+                type="button"
+                onClick={() => onModelModeChange(mode)}
+                aria-pressed={active}
+                className="flex flex-col items-start rounded-xl border px-3 py-2 text-left transition-all"
+                style={{
+                  borderColor: active ? accent : "rgba(255,255,255,0.1)",
+                  background: active
+                    ? `color-mix(in srgb, ${accent} 16%, transparent)`
+                    : "rgba(255,255,255,0.02)",
+                  boxShadow: active ? `0 0 22px -8px ${accent}` : "none",
+                }}
+              >
+                <span
+                  className="text-sm font-semibold"
+                  style={{ color: active ? accent : "var(--color-foreground)" }}
+                >
+                  {label}
+                </span>
+                <span className="text-[0.7rem] text-muted">{hint}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      <span className="h-px w-full bg-white/8" />
+
+      {/* Row: playback + display */}
       <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
         {/* Pause / play */}
         <button
@@ -119,11 +185,11 @@ export function AtomControlsPanel({
 
       <span className="h-px w-full bg-white/8" />
 
-      {/* Row 2: visual mode */}
+      {/* Row: visual emphasis (options depend on the active model) */}
       <div className="flex flex-wrap items-center gap-2">
         <span className="text-xs uppercase tracking-wide text-muted">View</span>
         <div className="flex flex-wrap rounded-lg border border-white/10 bg-white/[0.03] p-0.5">
-          {VISUAL_MODES.map(({ mode, label }) => {
+          {visualModes.map(({ mode, label }) => {
             const active = mode === visualMode;
             return (
               <button

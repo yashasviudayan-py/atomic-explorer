@@ -1,14 +1,24 @@
+import type { AtomicModelMode } from "./atomTypes";
+
 interface ModelNoticeProps {
+  /** Which model the notice should describe. */
+  mode: AtomicModelMode;
   /** Optional extra classes for layout (margins, etc.). */
   className?: string;
 }
 
+const NOTICE: Record<AtomicModelMode, string> = {
+  bohr: "This is an educational Bohr-style visualization. Real electron behaviour is quantum mechanical and better represented by probability orbitals.",
+  quantum:
+    "This is a simplified probability-cloud visualization inspired by atomic orbitals. It is designed for learning, not as a full quantum-mechanical calculation.",
+};
+
 /**
- * Compact scientific-honesty notice. Clarifies that the 3D atom is an
- * educational Bohr-style visualization rather than a quantum-accurate model.
- * Designed to be readable but unintrusive on the OLED theme.
+ * Compact scientific-honesty notice. Adapts its wording to the active model so
+ * the claim on screen always matches what's being rendered. Readable but
+ * unintrusive on the OLED theme.
  */
-export function ModelNotice({ className = "" }: ModelNoticeProps) {
+export function ModelNotice({ mode, className = "" }: ModelNoticeProps) {
   return (
     <div
       className={`glass-panel flex items-start gap-3 rounded-2xl px-4 py-3 ${className}`}
@@ -19,10 +29,7 @@ export function ModelNotice({ className = "" }: ModelNoticeProps) {
       >
         i
       </span>
-      <p className="text-xs leading-relaxed text-muted">
-        This is an educational Bohr-style visualization. Real electron behaviour
-        is quantum mechanical and better represented by probability orbitals.
-      </p>
+      <p className="text-xs leading-relaxed text-muted">{NOTICE[mode]}</p>
     </div>
   );
 }

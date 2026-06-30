@@ -9,11 +9,15 @@ import type { Element } from "@/types/element";
 import { Nucleus } from "./Nucleus";
 import { ElectronShell } from "./ElectronShell";
 import { AtomLabels } from "./AtomLabels";
+import { QuantumOrbitalCloud } from "./QuantumOrbitalCloud";
 import {
+  AtomicModelMode,
   AtomVisualMode,
   ParticleType,
   SelectedParticle,
   getElectronShellRadius,
+  getOrbitalLayerRadius,
+  getOrbitalTypesForBlock,
 } from "./atomUtils";
 
 interface AtomSceneProps {
@@ -29,6 +33,8 @@ interface AtomSceneProps {
   showLabels: boolean;
   /** Animation speed multiplier (0 = paused). */
   animationSpeed: number;
+  /** Which conceptual model to render (Bohr shells vs quantum cloud). */
+  atomicModelMode: AtomicModelMode;
   /** Visual emphasis mode for the scene. */
   visualMode: AtomVisualMode;
   /** Incrementing counter; each change triggers an OrbitControls reset. */
@@ -52,7 +58,8 @@ function emphasisFor(mode: AtomVisualMode) {
         electronEmphasis: 1.5,
         ringEmphasis: true,
       };
-    case "bohr":
+    case "orbital-focus":
+    case "balanced":
     default:
       return {
         nucleonEmphasis: 1,
@@ -97,6 +104,7 @@ function DriftingStars({ speed }: { speed: number }) {
  * keeping the overall composition dark and elegant.
  */
 export function AtomScene({
+  element,
   protons,
   neutrons,
   shells,
@@ -104,6 +112,7 @@ export function AtomScene({
   setSelectedParticleType,
   showLabels,
   animationSpeed,
+  atomicModelMode,
   visualMode,
   resetSignal,
 }: AtomSceneProps) {
@@ -119,21 +128,37 @@ export function AtomScene({
     controlsRef.current?.reset();
   }, [resetSignal]);
 
-  const outerRadius = getElectronShellRadius(Math.max(0, shells.length - 1));
+  const isQuantum = atomicModelMode === "quantum";
   const emphasis = useMemo(() => emphasisFor(visualMode), [visualMode]);
+
+  // Outermost radius drives the camera framing / zoom-out limit per model.
+  const outerRadius = useMemo(() => {
+    if (isQuantum) {
+      const types = getOrbitalTypesForBlock(element.block);
+      return getOrbitalLayerRadius(types[types.length - 1]);
+    }
+    return getElectronShellRadius(Math.max(0, shells.length - 1));
+  }, [isQuantum, element.block, shells.length]);
 
   return (
     <>
-      {/* Lighting: gentle ambient fill plus tinted point lights for depth. */}
-      <ambientLight intensity={0.4} />
+      {/* Lighting: gentle ambient fill plus tinted point lights for depth.
+          Quantum mode is calmer and cooler; Bohr mode keeps a warmer core. */}
+      <ambientLight intensity={isQuantum ? 0.5 : 0.4} />
       <pointLight position={[12, 12, 12]} intensity={130} color="#38bdf8" distance={70} />
       <pointLight position={[-14, -6, -8]} intensity={95} color="#a855f7" distance={70} />
-      <pointLight position={[0, 0, 0]} intensity={emphasis.nucleonEmphasis * 7} color="#ff7aa0" distance={9} />
+      <pointLight
+        position={[0, 0, 0]}
+        intensity={(isQuantum ? 4 : emphasis.nucleonEmphasis * 7)}
+        color={isQuantum ? "#9ec5ff" : "#ff7aa0"}
+        distance={isQuantum ? 12 : 9}
+      />
       {/* Cool rim light to separate the atom from the black backdrop. */}
       <directionalLight position={[-6, 8, -10]} intensity={0.6} color="#9ec5ff" />
 
       <DriftingStars speed={animationSpeed} />
 
+      {/* The nucleus is shared by both models. */}
       <Nucleus
         protons={protons}
         neutrons={neutrons}
@@ -143,20 +168,36 @@ export function AtomScene({
         emphasized={emphasis.nucleusEmphasized}
       />
 
-      {shells.map((count, index) => (
-        <ElectronShell
-          key={index}
-          shellIndex={index}
-          electronCount={count}
+      {isQuantum ? (
+        <QuantumOrbitalCloud
+          element={element}
           selected={selectedParticleType}
-          onSelect={setSelectedParticleType}
+          setSelectedParticleType={setSelectedParticleType}
           animationSpeed={animationSpeed}
-          electronEmphasis={emphasis.electronEmphasis}
-          ringEmphasis={emphasis.ringEmphasis}
+          visualMode={visualMode}
         />
-      ))}
+      ) : (
+        shells.map((count, index) => (
+          <ElectronShell
+            key={index}
+            shellIndex={index}
+            electronCount={count}
+            selected={selectedParticleType}
+            onSelect={setSelectedParticleType}
+            animationSpeed={animationSpeed}
+            electronEmphasis={emphasis.electronEmphasis}
+            ringEmphasis={emphasis.ringEmphasis}
+          />
+        ))
+      )}
 
-      {showLabels && <AtomLabels shellCount={shells.length} />}
+      {showLabels && (
+        <AtomLabels
+          mode={atomicModelMode}
+          shellCount={shells.length}
+          orbitalRadius={outerRadius}
+        />
+      )}
 
       <OrbitControls
         ref={controlsRef}
