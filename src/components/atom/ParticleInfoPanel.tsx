@@ -2,6 +2,7 @@
 
 import type { Element } from "@/types/element";
 import type { Isotope } from "@/types/isotope";
+import type { AtomicModelMode } from "./atomTypes";
 import { ParticleType, SelectedParticle } from "./atomUtils";
 
 interface ParticleInfoPanelProps {
@@ -12,6 +13,8 @@ interface ParticleInfoPanelProps {
   shells: number[];
   /** True when the rendered nucleus is a capped, representative cluster. */
   capped: boolean;
+  /** Active model, so the overview copy matches what's on screen. */
+  modelMode: AtomicModelMode;
   accent: string;
   /** Clear the current selection back to the general overview. */
   onClear: () => void;
@@ -59,6 +62,14 @@ const PARTICLE_COPY: Record<ParticleType, ParticleCopy> = {
     isotopeNote:
       "Shell structure depends on electron count, not neutrons, so it stays the same across the neutral isotopes of this element.",
   },
+  orbital: {
+    title: "Orbital region",
+    charge: "Probability cloud",
+    accent: "#b9a8ff",
+    body: "Orbitals describe regions where electrons are most likely to be found — not fixed paths like planets orbiting a star. s orbitals are spherical, p orbitals are dumbbell-shaped, and d and f orbitals are more complex. Denser parts of the cloud mean a higher probability of finding an electron there.",
+    isotopeNote:
+      "This cloud is a simplified visualization for learning, not an exact quantum-mechanical calculation. The shapes shown are inspired by real atomic orbitals.",
+  },
 };
 
 /**
@@ -72,14 +83,33 @@ export function ParticleInfoPanel({
   selected,
   shells,
   capped,
+  modelMode,
   accent,
   onClear,
 }: ParticleInfoPanelProps) {
   const copy = selected ? PARTICLE_COPY[selected] : null;
   const { protons, neutrons, electrons } = isotope;
+  const isQuantum = modelMode === "quantum";
 
   return (
     <div className="glass-panel flex flex-col gap-5 rounded-2xl p-5">
+      {/* Active model + block, so the panel always reflects what's on screen. */}
+      <div className="flex flex-wrap items-center gap-2">
+        <span
+          className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium"
+          style={{
+            borderColor: `${accent}55`,
+            color: accent,
+            background: `${accent}14`,
+          }}
+        >
+          {isQuantum ? "Quantum Cloud model" : "Bohr-style model"}
+        </span>
+        <span className="rounded-full border border-white/10 bg-white/[0.03] px-2.5 py-0.5 text-[0.7rem] text-muted">
+          {element.block}-block
+        </span>
+      </div>
+
       <div>
         <div className="flex items-center justify-between gap-2">
           <h3
@@ -140,11 +170,34 @@ export function ParticleInfoPanel({
               {isotope.description}
             </p>
             <p className="mt-2 text-sm leading-relaxed text-muted">
-              A neutral {element.name} atom carries equal protons and electrons
-              ({electrons}). Tap any particle in the model to learn what it does.
+              {isQuantum ? (
+                <>
+                  This is a simplified probability-cloud view inspired by atomic
+                  orbitals: the cloud shows where the {electrons} electron
+                  {electrons === 1 ? "" : "s"} of a neutral {element.name} atom
+                  are likely to be — not exact paths. Click the cloud to learn
+                  more.
+                </>
+              ) : (
+                <>
+                  This is an educational Bohr-style model: a neutral{" "}
+                  {element.name} atom carries equal protons and electrons (
+                  {electrons}). Tap any particle to learn what it does.
+                </>
+              )}
             </p>
           </>
         )}
+      </div>
+
+      {/* Electron configuration */}
+      <div>
+        <h4 className="text-xs font-semibold uppercase tracking-wider text-muted">
+          Electron configuration
+        </h4>
+        <p className="mt-1.5 font-mono text-sm text-foreground">
+          {element.electronConfiguration}
+        </p>
       </div>
 
       {/* Isotope facts */}
