@@ -4,7 +4,6 @@ import { notFound } from "next/navigation";
 import { ELEMENTS, getElementBySymbol } from "@/data/elements";
 import { CATEGORY_META } from "@/lib/elementCategories";
 import { AtomViewerClient } from "@/components/atom/AtomViewerClient";
-import { ModelNotice } from "@/components/atom/ModelNotice";
 
 interface ElementDetailPageProps {
   // In the Next.js App Router (v15+), dynamic route params are async.
@@ -120,10 +119,14 @@ export default async function ElementDetailPage({
           title={`Inside the ${element.name} atom`}
           accent={meta.accent}
         />
+        <p className="mt-2 max-w-2xl text-sm leading-relaxed text-muted">
+          Switch between Bohr and Quantum Cloud modes to compare a simple
+          teaching model with a more realistic probability-based view, and follow
+          the guided tour to explore the {element.name} atom step by step.
+        </p>
         <div className="mt-4">
           <AtomViewerClient element={element} />
         </div>
-        <ModelNotice className="mt-3" />
       </section>
 
       {/* Electron configuration + shell distribution */}
