@@ -24,7 +24,10 @@ export function LessonPage({ lesson, previousLesson, nextLesson }: LessonPagePro
   const difficulty = DIFFICULTY_META[lesson.difficulty];
   const [completed, setCompleted] = useState(false);
 
+  // Completion lives in localStorage (client-only), so read it after mount to
+  // keep the server render and first client render in agreement.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCompleted(isLessonComplete(lesson.slug));
   }, [lesson.slug]);
 

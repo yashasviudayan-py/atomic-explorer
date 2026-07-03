@@ -47,6 +47,7 @@ export function ElementSelector({
 
   // Keep the active option valid whenever the result set changes.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActiveIndex((i) => (results.length === 0 ? 0 : Math.min(i, results.length - 1)));
   }, [results.length]);
 
@@ -65,6 +66,7 @@ export function ElementSelector({
   // When opening, focus the search field and reset the query to the full list.
   useEffect(() => {
     if (open) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setQuery("");
       // Focus after the panel paints.
       const id = requestAnimationFrame(() => inputRef.current?.focus());

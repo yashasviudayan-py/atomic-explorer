@@ -20,7 +20,10 @@ export function LearnHub() {
   const [completedSlugs, setCompletedSlugs] = useState<string[]>([]);
   const [loaded, setLoaded] = useState(false);
 
+  // localStorage is client-only, so we read progress after mount. The extra
+  // render is intentional and keeps server/first-client markup in agreement.
   useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setCompletedSlugs(getLessonProgress().completedSlugs);
     setLoaded(true);
   }, []);

@@ -204,6 +204,9 @@ export function AtomMiniViewer({
   animate = true,
 }: AtomMiniViewerProps) {
   const [mounted, setMounted] = useState(false);
+  // Client-only WebGL gate: intentionally flip state after mount so the
+  // server render and first client render agree before the canvas appears.
+  // eslint-disable-next-line react-hooks/set-state-in-effect
   useEffect(() => setMounted(true), []);
 
   // Frame the camera so the outermost shell fits comfortably.
