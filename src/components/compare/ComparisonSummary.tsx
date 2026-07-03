@@ -22,8 +22,7 @@ export function ComparisonSummary({
   leftAccent,
   rightAccent,
 }: ComparisonSummaryProps) {
-  const { left, right, atomicNumber, mass, particles, shells, category } =
-    comparison;
+  const { left, right, atomicNumber, mass, particles, category } = comparison;
 
   // Number-of-shells metric, derived on the fly from the shell distributions.
   const shellsMetric = {
