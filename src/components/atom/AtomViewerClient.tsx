@@ -17,7 +17,7 @@ const AtomViewer = dynamic(
     ssr: false,
     loading: () => (
       <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
-        <div className="glass-panel-subtle flex h-[clamp(24rem,60vh,32rem)] items-center justify-center rounded-3xl lg:h-[clamp(560px,70vh,820px)]">
+        <div className="glass-panel-subtle flex h-[clamp(26rem,66vh,38rem)] items-center justify-center rounded-3xl lg:h-[clamp(600px,74vh,860px)]">
           <span className="animate-pulse text-sm text-muted">
             Loading 3D atom…
           </span>

@@ -205,7 +205,7 @@ export function AtomScene({
         enableDamping
         dampingFactor={0.06}
         minDistance={4}
-        maxDistance={Math.max(26, outerRadius * 2.8)}
+        maxDistance={Math.max(32, outerRadius * 4.2)}
         rotateSpeed={0.55}
         zoomSpeed={0.8}
       />
