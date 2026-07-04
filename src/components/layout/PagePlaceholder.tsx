@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import { ChevronLeft } from "@/components/ui/Icon";
 
 interface PagePlaceholderProps {
   /** Small label shown above the title (e.g. section/breadcrumb). */
@@ -26,11 +27,11 @@ export function PagePlaceholder({
   return (
     <section className="mx-auto max-w-4xl px-4 py-20 sm:px-6 lg:px-8 lg:py-28">
       <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium tracking-wide text-muted backdrop-blur">
-        <span className="h-1.5 w-1.5 rounded-full bg-accent-violet" />
+        <span className="h-1.5 w-1.5 rounded-full bg-accent" />
         {eyebrow}
       </span>
 
-      <h1 className="mt-6 bg-gradient-to-br from-white to-accent/70 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl lg:text-5xl">
+      <h1 className="mt-6 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
         {title}
       </h1>
       <p className="mt-5 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
@@ -44,8 +45,8 @@ export function PagePlaceholder({
               key={item}
               className="glass-panel flex items-center gap-3 rounded-xl px-4 py-3.5 text-sm text-foreground"
             >
-              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-accent/10 text-xs text-accent">
-                ✦
+              <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-accent/40 bg-accent/10 text-accent">
+                <span className="h-1.5 w-1.5 rounded-full bg-accent" />
               </span>
               {item}
             </li>
@@ -58,9 +59,9 @@ export function PagePlaceholder({
       <div className="mt-12 flex flex-wrap gap-3">
         <Link
           href="/"
-          className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-foreground transition-all hover:border-white/25 hover:bg-white/10"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-foreground transition-all hover:border-white/25 hover:bg-white/10"
         >
-          <span>←</span> Back home
+          <ChevronLeft className="h-4 w-4" /> Back home
         </Link>
         <Link
           href="/elements"
