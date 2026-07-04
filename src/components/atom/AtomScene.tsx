@@ -84,13 +84,13 @@ function DriftingStars({ speed }: { speed: number }) {
   return (
     <group ref={groupRef}>
       <Stars
-        radius={90}
-        depth={60}
-        count={4500}
-        factor={4}
+        radius={100}
+        depth={50}
+        count={1600}
+        factor={2.5}
         saturation={0}
         fade
-        speed={0.3}
+        speed={0.2}
       />
     </group>
   );
@@ -142,19 +142,19 @@ export function AtomScene({
 
   return (
     <>
-      {/* Lighting: gentle ambient fill plus tinted point lights for depth.
-          Quantum mode is calmer and cooler; Bohr mode keeps a warmer core. */}
-      <ambientLight intensity={isQuantum ? 0.5 : 0.4} />
-      <pointLight position={[12, 12, 12]} intensity={130} color="#38bdf8" distance={70} />
-      <pointLight position={[-14, -6, -8]} intensity={95} color="#a855f7" distance={70} />
+      {/* Lighting: quiet ambient fill, one cool key light, a faint violet
+          bounce for depth, and a rim light to lift the atom off true black. */}
+      <ambientLight intensity={isQuantum ? 0.45 : 0.4} />
+      <pointLight position={[12, 14, 10]} intensity={120} color="#bcd8ff" distance={80} />
+      <pointLight position={[-14, -6, -8]} intensity={40} color="#7d7aff" distance={70} />
       <pointLight
         position={[0, 0, 0]}
-        intensity={(isQuantum ? 4 : emphasis.nucleonEmphasis * 7)}
-        color={isQuantum ? "#9ec5ff" : "#ff7aa0"}
+        intensity={isQuantum ? 3 : emphasis.nucleonEmphasis * 5}
+        color={isQuantum ? "#9ec5ff" : "#ff8fa8"}
         distance={isQuantum ? 12 : 9}
       />
       {/* Cool rim light to separate the atom from the black backdrop. */}
-      <directionalLight position={[-6, 8, -10]} intensity={0.6} color="#9ec5ff" />
+      <directionalLight position={[-6, 8, -10]} intensity={0.55} color="#9ec5ff" />
 
       <DriftingStars speed={animationSpeed} />
 
@@ -203,10 +203,10 @@ export function AtomScene({
         ref={controlsRef}
         enablePan
         enableDamping
-        dampingFactor={0.08}
+        dampingFactor={0.06}
         minDistance={4}
-        maxDistance={Math.max(28, outerRadius * 3)}
-        rotateSpeed={0.6}
+        maxDistance={Math.max(26, outerRadius * 2.8)}
+        rotateSpeed={0.55}
         zoomSpeed={0.8}
       />
     </>

@@ -41,23 +41,23 @@ export interface NucleusDisplayCounts {
 }
 
 /**
- * Accent palette for particles. Warm rose/plasma for protons, cool cyan for
- * neutrons, electric blue-white for electrons — all chosen to glow on OLED
- * black without reading as a childish rainbow.
+ * Refined particle palette. Soft rose/plasma for protons, desaturated cool
+ * blue for neutrons, bright cyan-white for electrons — precise accents that
+ * read cleanly on OLED black without becoming a candy rainbow.
  */
 export const PARTICLE_COLORS = {
-  proton: { color: "#ff5d7e", emissive: "#ff1f4f" },
-  neutron: { color: "#5fc8ff", emissive: "#1f7fd6" },
-  electron: { color: "#cdeeff", emissive: "#38bdf8" },
-  shell: { color: "#6fd6ff", emissive: "#2aa9ff" },
-  orbital: { color: "#a9c7ff", emissive: "#6d8bff" },
+  proton: { color: "#ff6b84", emissive: "#e83a5a" },
+  neutron: { color: "#7fadd1", emissive: "#2e6faa" },
+  electron: { color: "#eaf6ff", emissive: "#64d2ff" },
+  shell: { color: "#64d2ff", emissive: "#0a84ff" },
+  orbital: { color: "#a5c8ff", emissive: "#5e5ce6" },
 } as const;
 
 /** Radius of an individual nucleon sphere. */
 export const NUCLEON_RADIUS = 0.32;
 
 /** Radius of an electron sphere. */
-export const ELECTRON_RADIUS = 0.22;
+export const ELECTRON_RADIUS = 0.17;
 
 /** Base radius of the innermost electron shell. */
 export const SHELL_BASE_RADIUS = 2.6;
@@ -306,12 +306,12 @@ export function getShellAngularSpeed(shellIndex: number): number {
  * point cloud per orbital family so the shapes read clearly on OLED black.
  * ------------------------------------------------------------------------- */
 
-/** Restrained blue/cyan/violet palette for each orbital family. */
+/** Restrained cyan → blue-white → violet palette for each orbital family. */
 export const ORBITAL_COLORS: Record<OrbitalType, { color: string; glow: string }> = {
-  s: { color: "#7fe8ff", glow: "#38bdf8" },
-  p: { color: "#9ec5ff", glow: "#5b8bff" },
-  d: { color: "#b9a8ff", glow: "#8b6dff" },
-  f: { color: "#d2b4ff", glow: "#a855f7" },
+  s: { color: "#9fe0ff", glow: "#64d2ff" },
+  p: { color: "#8fb8ff", glow: "#0a84ff" },
+  d: { color: "#a9a6ff", glow: "#7d7aff" },
+  f: { color: "#c9aaff", glow: "#bf5af2" },
 } as const;
 
 /** Friendly names + one-line shape descriptions for each orbital family. */
@@ -333,12 +333,14 @@ const ORBITAL_LAYER_RADIUS: Record<OrbitalType, number> = {
   f: 6.3,
 };
 
-/** Points sampled into each orbital family's cloud (fixed → heavy-atom safe). */
+/** Points sampled into each orbital family's cloud (fixed → heavy-atom safe).
+ * Dense enough to read as a continuous probability field, and each cloud is a
+ * single draw call so the cost stays flat regardless of atomic number. */
 const ORBITAL_POINT_COUNT: Record<OrbitalType, number> = {
-  s: 420,
-  p: 520,
-  d: 620,
-  f: 720,
+  s: 1500,
+  p: 1900,
+  d: 2300,
+  f: 2700,
 };
 
 /** Radius of the cloud layer for an orbital family. */
@@ -485,12 +487,14 @@ export function generateOrbitalPoints(type: OrbitalType): Float32Array {
   };
 
   if (type === "s") {
-    // Fuzzy spherical shell: uniform direction, density peaking near `radius`.
+    // Soft spherical cloud: uniform direction, density falling away from the
+    // nucleus so the core reads dense and the edge fades to nothing.
     for (let i = 0; i < count; i++) {
       const u = rng() * 2 - 1; // cos(theta), uniform on sphere
       const phi = rng() * Math.PI * 2;
       const s = Math.sqrt(Math.max(0, 1 - u * u));
-      const r = radius * (0.45 + 0.4 * rng() + 0.12 * Math.abs(gauss()));
+      const r =
+        radius * (0.08 + 0.92 * Math.pow(rng(), 1.4) + 0.05 * Math.abs(gauss()));
       positions[i * 3] = Math.cos(phi) * s * r;
       positions[i * 3 + 1] = u * r;
       positions[i * 3 + 2] = Math.sin(phi) * s * r;
@@ -499,10 +503,24 @@ export function generateOrbitalPoints(type: OrbitalType): Float32Array {
   }
 
   const lobes = getOrbitalLobes(type);
-  const width = radius * 0.18;
-  const length = radius * 0.34;
+  const width = radius * 0.19;
+  const length = radius * 0.36;
 
-  for (let i = 0; i < count; i++) {
+  // A small fraction of points scatter as a fine ambient haze between lobes,
+  // so the field reads as a probability distribution rather than solid petals.
+  const hazeCount = Math.floor(count * 0.14);
+
+  for (let i = 0; i < hazeCount; i++) {
+    const u = rng() * 2 - 1;
+    const phi = rng() * Math.PI * 2;
+    const s = Math.sqrt(Math.max(0, 1 - u * u));
+    const r = radius * (0.25 + 0.65 * Math.pow(rng(), 1.6));
+    positions[i * 3] = Math.cos(phi) * s * r;
+    positions[i * 3 + 1] = u * r;
+    positions[i * 3 + 2] = Math.sin(phi) * s * r;
+  }
+
+  for (let i = hazeCount; i < count; i++) {
     const lobe = lobes[i % lobes.length];
     const dir = lobe.dir;
     // Isotropic gaussian blob, then stretch the component along the lobe axis.

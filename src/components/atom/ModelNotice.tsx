@@ -21,7 +21,7 @@ const NOTICE: Record<AtomicModelMode, string> = {
 export function ModelNotice({ mode, className = "" }: ModelNoticeProps) {
   return (
     <div
-      className={`glass-panel flex items-start gap-3 rounded-2xl px-4 py-3 ${className}`}
+      className={`glass-panel-subtle flex items-start gap-3 rounded-2xl px-4 py-3 ${className}`}
     >
       <span
         aria-hidden="true"

@@ -17,7 +17,7 @@ export interface CategoryMeta {
   border: string;
   /** Accent text / symbol color. */
   text: string;
-  /** Hover glow ring + shadow. */
+  /** Hover state: category-tinted border brighten (no colored glow). */
   glow: string;
   /** Raw accent hex for inline glows, swatches, and CSS variables. */
   accent: string;
@@ -30,7 +30,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-amber-400/10",
     border: "border-amber-300/25",
     text: "text-amber-200",
-    glow: "hover:border-amber-300/50 hover:shadow-[0_0_24px_-4px] hover:shadow-amber-400/40",
+    glow: "hover:border-amber-300/50",
     accent: "#fbbf24",
   },
   "alkaline-earth-metal": {
@@ -39,7 +39,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-yellow-200/10",
     border: "border-yellow-200/25",
     text: "text-yellow-100",
-    glow: "hover:border-yellow-200/50 hover:shadow-[0_0_24px_-4px] hover:shadow-yellow-200/40",
+    glow: "hover:border-yellow-200/50",
     accent: "#fde68a",
   },
   "transition-metal": {
@@ -48,7 +48,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-sky-400/10",
     border: "border-sky-400/25",
     text: "text-sky-200",
-    glow: "hover:border-sky-400/50 hover:shadow-[0_0_24px_-4px] hover:shadow-sky-400/40",
+    glow: "hover:border-sky-400/50",
     accent: "#38bdf8",
   },
   "post-transition-metal": {
@@ -57,7 +57,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-cyan-300/10",
     border: "border-cyan-300/25",
     text: "text-cyan-100",
-    glow: "hover:border-cyan-300/50 hover:shadow-[0_0_24px_-4px] hover:shadow-cyan-300/40",
+    glow: "hover:border-cyan-300/50",
     accent: "#67e8f9",
   },
   metalloid: {
@@ -66,7 +66,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-emerald-400/10",
     border: "border-emerald-400/25",
     text: "text-emerald-200",
-    glow: "hover:border-emerald-400/50 hover:shadow-[0_0_24px_-4px] hover:shadow-emerald-400/40",
+    glow: "hover:border-emerald-400/50",
     accent: "#34d399",
   },
   "reactive-nonmetal": {
@@ -75,7 +75,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-fuchsia-400/10",
     border: "border-fuchsia-400/25",
     text: "text-fuchsia-200",
-    glow: "hover:border-fuchsia-400/50 hover:shadow-[0_0_24px_-4px] hover:shadow-fuchsia-400/40",
+    glow: "hover:border-fuchsia-400/50",
     accent: "#e879f9",
   },
   "noble-gas": {
@@ -84,7 +84,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-indigo-400/10",
     border: "border-indigo-400/25",
     text: "text-indigo-200",
-    glow: "hover:border-indigo-400/50 hover:shadow-[0_0_24px_-4px] hover:shadow-indigo-400/40",
+    glow: "hover:border-indigo-400/50",
     accent: "#818cf8",
   },
   lanthanide: {
@@ -93,7 +93,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-rose-400/10",
     border: "border-rose-400/25",
     text: "text-rose-200",
-    glow: "hover:border-rose-400/50 hover:shadow-[0_0_24px_-4px] hover:shadow-rose-400/40",
+    glow: "hover:border-rose-400/50",
     accent: "#fb7185",
   },
   actinide: {
@@ -102,7 +102,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-orange-500/10",
     border: "border-orange-500/25",
     text: "text-orange-200",
-    glow: "hover:border-orange-500/50 hover:shadow-[0_0_24px_-4px] hover:shadow-orange-500/40",
+    glow: "hover:border-orange-500/50",
     accent: "#fb923c",
   },
   unknown: {
@@ -111,7 +111,7 @@ export const CATEGORY_META: Record<ElementCategory, CategoryMeta> = {
     tileBg: "bg-slate-400/10",
     border: "border-slate-400/20",
     text: "text-slate-300",
-    glow: "hover:border-slate-400/40 hover:shadow-[0_0_24px_-4px] hover:shadow-slate-400/30",
+    glow: "hover:border-slate-400/40",
     accent: "#94a3b8",
   },
 };

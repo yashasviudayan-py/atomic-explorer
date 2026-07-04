@@ -41,11 +41,10 @@ export default async function ComparePage({ searchParams }: ComparePageProps) {
       {/* Ambient dual-accent glow anchoring the dashboard against OLED black. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[32rem] opacity-40"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[30rem] opacity-30"
         style={{
           background:
-            "radial-gradient(40rem 24rem at 20% -10%, rgba(56,189,248,0.16), transparent 70%)," +
-            "radial-gradient(40rem 24rem at 80% -10%, rgba(168,85,247,0.16), transparent 70%)",
+            "radial-gradient(48rem 24rem at 50% -12%, rgba(10,132,255,0.12), transparent 70%)",
         }}
       />
       <ElementComparePage initialLeft={initialLeft} initialRight={initialRight} />

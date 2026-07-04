@@ -26,7 +26,7 @@ export function LearningPath({
       {/* Connecting path line */}
       <div
         aria-hidden="true"
-        className="absolute bottom-8 left-[2.1rem] top-8 hidden w-px bg-gradient-to-b from-accent/40 via-accent-violet/30 to-accent-pink/20 sm:block"
+        className="absolute bottom-8 left-[2.1rem] top-8 hidden w-px bg-gradient-to-b from-accent/40 via-accent/20 to-transparent sm:block"
       />
       {lessons.map((lesson) => (
         <li key={lesson.slug} className="relative">

@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Element } from "@/types/element";
 import { getElementBySymbol } from "@/data/elements";
 import { CATEGORY_META } from "@/lib/elementCategories";
+import { ChevronRight } from "@/components/ui/Icon";
 
 interface RelatedElementsProps {
   symbols: string[];
@@ -58,12 +59,7 @@ export function RelatedElements({ symbols, title = "Related elements" }: Related
                     {meta.label}
                   </span>
                 </span>
-                <span
-                  aria-hidden="true"
-                  className="ml-auto text-muted/50 transition-transform group-hover:translate-x-0.5 group-hover:text-foreground"
-                >
-                  →
-                </span>
+                <ChevronRight className="ml-auto h-4 w-4 text-muted/50 transition-transform duration-300 ease-spring group-hover:translate-x-0.5 group-hover:text-foreground" />
               </Link>
             </li>
           );

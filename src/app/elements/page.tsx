@@ -33,17 +33,16 @@ export default function ElementsPage() {
   const previewElement = hovered ?? ELEMENTS[0];
 
   return (
-    <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <div className="page-shell py-10 lg:py-14">
       {/* Header */}
       <header className="relative">
-        <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-xs font-medium tracking-wide text-muted backdrop-blur">
-          <span className="h-1.5 w-1.5 rounded-full bg-accent" />
+        <span className="text-xs font-semibold uppercase tracking-[0.12em] text-accent-cyan">
           Periodic Table
         </span>
-        <h1 className="mt-5 bg-gradient-to-br from-white to-accent/70 bg-clip-text text-3xl font-bold tracking-tight text-transparent sm:text-4xl lg:text-5xl">
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
           Interactive Periodic Table
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-secondary sm:text-lg">
           Choose any element to explore its atomic structure, particles, shells,
           and scientific properties.
         </p>
@@ -61,24 +60,13 @@ export default function ElementsPage() {
 
       {/* Table + preview */}
       <div className="mt-8 grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem]">
-        <section className="glass-panel relative overflow-hidden rounded-2xl p-4 sm:p-5">
-          {/* Soft radial glow behind the grid */}
-          <div
-            aria-hidden="true"
-            className="pointer-events-none absolute inset-0 opacity-60"
-            style={{
-              background:
-                "radial-gradient(40rem 30rem at 30% -10%, rgba(56,189,248,0.10), transparent 60%), radial-gradient(35rem 30rem at 100% 120%, rgba(168,85,247,0.10), transparent 60%)",
-            }}
+        <section className="glass-panel-subtle relative overflow-hidden rounded-2xl p-4 sm:p-5">
+          <PeriodicTable
+            searchQuery={searchQuery}
+            activeCategory={activeCategory}
+            onPreview={setHovered}
+            activeSymbol={previewElement.symbol}
           />
-          <div className="relative">
-            <PeriodicTable
-              searchQuery={searchQuery}
-              activeCategory={activeCategory}
-              onPreview={setHovered}
-              activeSymbol={previewElement.symbol}
-            />
-          </div>
         </section>
 
         {/* Preview panel sticks alongside on large screens */}
@@ -88,8 +76,8 @@ export default function ElementsPage() {
       </div>
 
       {/* Legend */}
-      <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.02] p-5">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted">
+      <section className="mt-8 rounded-2xl border border-white/10 bg-white/[0.03] p-5">
+        <h2 className="mb-3 text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-muted-2">
           Categories
         </h2>
         <ElementLegend />

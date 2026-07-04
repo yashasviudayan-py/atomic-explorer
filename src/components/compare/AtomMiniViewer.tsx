@@ -58,7 +58,7 @@ function MiniNucleus({ protons, neutrons }: { protons: number; neutrons: number 
       <mesh>
         <sphereGeometry args={[glowRadius, 16, 16]} />
         <meshBasicMaterial
-          color="#ff7aa0"
+          color="#ff8fa8"
           transparent
           opacity={0.08}
           depthWrite={false}
@@ -161,10 +161,10 @@ function MiniAtomScene({
 
   return (
     <>
-      <ambientLight intensity={0.55} />
-      <pointLight position={[8, 8, 8]} intensity={70} color="#38bdf8" distance={50} />
-      <pointLight position={[-8, -4, -6]} intensity={55} color="#a855f7" distance={50} />
-      <pointLight position={[0, 0, 0]} intensity={4} color="#ff7aa0" distance={7} />
+      <ambientLight intensity={0.5} />
+      <pointLight position={[8, 10, 7]} intensity={70} color="#bcd8ff" distance={60} />
+      <pointLight position={[-8, -4, -6]} intensity={26} color="#7d7aff" distance={50} />
+      <pointLight position={[0, 0, 0]} intensity={3.5} color="#ff8fa8" distance={7} />
 
       <MiniNucleus protons={protons} neutrons={neutrons} />
       {element.shells.map((count, index) => (
@@ -212,27 +212,27 @@ export function AtomMiniViewer({
   // Frame the camera so the outermost shell fits comfortably.
   const cameraDistance = useMemo(() => {
     const outer = getElectronShellRadius(Math.max(0, element.shells.length - 1));
-    return outer * 1.8 + 5;
+    return outer * 2.1 + 6;
   }, [element.shells.length]);
 
   const meta = CATEGORY_META[element.category];
 
   return (
     <div
-      className="glass-panel relative aspect-square w-full overflow-hidden rounded-2xl"
+      className="glass-panel-subtle relative aspect-square w-full overflow-hidden rounded-2xl"
       style={{ ["--accent" as string]: accent }}
     >
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0 opacity-50"
+        className="pointer-events-none absolute inset-0 opacity-30"
         style={{
-          background: `radial-gradient(60% 60% at 50% 45%, ${accent}22, transparent 70%)`,
+          background: `radial-gradient(55% 55% at 50% 45%, ${accent}1c, transparent 70%)`,
         }}
       />
       {mounted ? (
         <Canvas
           dpr={[1, 1.5]}
-          camera={{ position: [cameraDistance * 0.2, cameraDistance * 0.3, cameraDistance], fov: 45 }}
+          camera={{ position: [cameraDistance * 0.2, cameraDistance * 0.28, cameraDistance], fov: 38 }}
           gl={{ antialias: true, powerPreference: "low-power" }}
           style={{ background: "transparent" }}
         >
@@ -245,7 +245,7 @@ export function AtomMiniViewer({
       )}
 
       {/* Corner label */}
-      <span className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-full border border-white/10 bg-black/40 px-2.5 py-1 text-xs backdrop-blur">
+      <span className="pointer-events-none absolute left-3 top-3 flex items-center gap-2 rounded-full border border-white/10 bg-black/60 px-2.5 py-1 text-xs backdrop-blur">
         <span className={`font-bold ${meta.text}`}>{element.symbol}</span>
         <span className="text-muted">{element.name}</span>
       </span>

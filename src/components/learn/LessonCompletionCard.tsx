@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { Lesson } from "@/types/lesson";
+import { Check, ChevronRight } from "@/components/ui/Icon";
 import { getElementBySymbol } from "@/data/elements";
 
 interface LessonCompletionCardProps {
@@ -29,15 +30,8 @@ export function LessonCompletionCard({
 
   return (
     <div className="glass-panel relative overflow-hidden rounded-2xl p-6 sm:p-8">
-      {/* Celebration glow, kept restrained */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-20 -top-20 h-64 w-64 rounded-full opacity-25 blur-3xl"
-        style={{ background: "#34d399" }}
-      />
-
-      <span className="inline-flex items-center gap-2 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">
-        <span aria-hidden="true">✓</span> Lesson complete
+      <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-semibold text-emerald-300">
+        <Check className="h-3.5 w-3.5" /> Lesson complete
       </span>
       <h2 className="mt-4 text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
         {lesson.title} — done.
@@ -52,9 +46,7 @@ export function LessonCompletionCard({
             key={title}
             className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.02] px-3.5 py-2.5 text-sm text-foreground/85"
           >
-            <span aria-hidden="true" className="text-emerald-300">
-              ✓
-            </span>
+            <Check className="h-4 w-4 shrink-0 text-emerald-300" />
             {title}
           </li>
         ))}
@@ -64,16 +56,17 @@ export function LessonCompletionCard({
         {nextLesson ? (
           <Link
             href={`/learn/${nextLesson.slug}`}
-            className="rounded-xl border border-accent/40 bg-accent/10 px-5 py-3 text-sm font-semibold text-accent shadow-[0_0_20px_-6px_var(--color-accent)] transition-all hover:bg-accent/20"
+            className="inline-flex items-center gap-1 rounded-xl border border-accent/40 bg-accent/10 px-5 py-3 text-sm font-semibold text-accent transition-all hover:bg-accent/20"
           >
-            Next lesson: {nextLesson.title} →
+            Next lesson: {nextLesson.title} <ChevronRight className="h-4 w-4" />
           </Link>
         ) : (
           <Link
             href="/compare"
-            className="rounded-xl border border-accent/40 bg-accent/10 px-5 py-3 text-sm font-semibold text-accent shadow-[0_0_20px_-6px_var(--color-accent)] transition-all hover:bg-accent/20"
+            className="inline-flex items-center gap-1 rounded-xl border border-accent/40 bg-accent/10 px-5 py-3 text-sm font-semibold text-accent transition-all hover:bg-accent/20"
           >
-            You finished the path — open the Compare lab →
+            You finished the path — open the Compare lab{" "}
+            <ChevronRight className="h-4 w-4" />
           </Link>
         )}
         {featured && (

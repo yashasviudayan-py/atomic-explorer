@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { Lesson } from "@/types/lesson";
+import { Check, ChevronRight } from "@/components/ui/Icon";
 
 interface ProgressSummaryProps {
   totalLessons: number;
@@ -40,10 +41,6 @@ export function ProgressSummary({
 
   return (
     <div className="glass-panel relative overflow-hidden rounded-2xl p-5 sm:p-6">
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -left-16 -top-16 h-48 w-48 rounded-full bg-accent opacity-15 blur-3xl"
-      />
       <div className="relative flex items-center gap-5">
         {/* Progress ring */}
         <div
@@ -67,7 +64,9 @@ export function ProgressSummary({
           </h2>
           <p className="mt-1 text-lg font-bold text-foreground">
             {completedCount} of {totalLessons} lessons
-            {allDone && <span className="ml-2 text-emerald-300">✓</span>}
+            {allDone && (
+              <Check className="ml-2 inline h-4 w-4 text-emerald-300 align-[-0.15em]" />
+            )}
           </p>
           <p className="mt-1 text-xs leading-relaxed text-muted">{motivation}</p>
         </div>
@@ -86,12 +85,7 @@ export function ProgressSummary({
               {nextLesson.title}
             </span>
           </span>
-          <span
-            aria-hidden="true"
-            className="shrink-0 text-accent transition-transform group-hover:translate-x-0.5"
-          >
-            →
-          </span>
+          <ChevronRight className="h-4 w-4 shrink-0 text-accent transition-transform duration-300 ease-spring group-hover:translate-x-0.5" />
         </Link>
       )}
     </div>

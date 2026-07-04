@@ -14,26 +14,16 @@ interface OrbitalInfoPanelProps {
  * the visualization does and does not represent — keeping the experience
  * scientifically honest without a wall of text.
  */
-export function OrbitalInfoPanel({ element, accent }: OrbitalInfoPanelProps) {
+export function OrbitalInfoPanel({ element }: OrbitalInfoPanelProps) {
   const types = getOrbitalTypesForBlock(element.block);
 
   return (
-    <div className="glass-panel flex flex-col gap-4 rounded-2xl p-5">
+    <div className="glass-panel-subtle flex flex-col gap-4 rounded-2xl p-5">
       <div className="flex items-center justify-between gap-2">
-        <h3
-          className="text-sm font-semibold uppercase tracking-wider"
-          style={{ color: accent }}
-        >
+        <h3 className="text-base font-semibold tracking-tight text-foreground">
           Orbital view
         </h3>
-        <span
-          className="inline-flex rounded-full border px-2.5 py-0.5 text-[0.7rem] font-medium"
-          style={{
-            borderColor: `${accent}55`,
-            color: accent,
-            background: `${accent}14`,
-          }}
-        >
+        <span className="inline-flex rounded-full border border-white/10 bg-white/[0.04] px-2.5 py-0.5 text-[0.7rem] font-medium text-secondary">
           {element.block}-block
         </span>
       </div>
@@ -47,7 +37,7 @@ export function OrbitalInfoPanel({ element, accent }: OrbitalInfoPanelProps) {
         {types.map((type) => (
           <li
             key={type}
-            className="flex items-start gap-2 text-xs leading-relaxed text-muted"
+            className="flex items-start gap-2 text-xs leading-relaxed text-secondary"
           >
             <span
               className="mt-0.5 inline-flex h-4 w-4 shrink-0 items-center justify-center rounded font-mono text-[0.65rem] font-semibold text-foreground"
@@ -65,7 +55,7 @@ export function OrbitalInfoPanel({ element, accent }: OrbitalInfoPanelProps) {
 
       <div className="grid gap-2">
         <div className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2">
-          <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-emerald-300/80">
+          <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-[#30d158]">
             What this means
           </span>
           <p className="mt-1 text-xs leading-relaxed text-muted">
@@ -74,7 +64,7 @@ export function OrbitalInfoPanel({ element, accent }: OrbitalInfoPanelProps) {
           </p>
         </div>
         <div className="rounded-lg border border-white/10 bg-white/[0.02] px-3 py-2">
-          <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-amber-300/80">
+          <span className="text-[0.65rem] font-semibold uppercase tracking-wide text-[#ff9f0a]">
             What this does not mean
           </span>
           <p className="mt-1 text-xs leading-relaxed text-muted">

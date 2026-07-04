@@ -93,18 +93,18 @@ export function ElectronShell({
           document.body.style.cursor = "auto";
         }}
       >
-        <torusGeometry args={[radius, 0.018, 8, 128]} />
+        <torusGeometry args={[radius, 0.011, 6, 160]} />
         <meshBasicMaterial
           color={color}
           transparent
           opacity={
             isSelected
-              ? 0.85
+              ? 0.8
               : hovered
-                ? 0.6
+                ? 0.55
                 : ringEmphasis
-                  ? 0.5
-                  : 0.32
+                  ? 0.45
+                  : 0.28
           }
           depthWrite={false}
         />

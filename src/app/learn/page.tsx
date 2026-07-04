@@ -17,23 +17,22 @@ export default function LearnPage() {
       {/* Ambient nebula glow anchoring the hub against OLED black */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[30rem] opacity-40"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[30rem] opacity-30"
         style={{
           background:
-            "radial-gradient(38rem 22rem at 25% -10%, rgba(56,189,248,0.16), transparent 70%)," +
-            "radial-gradient(38rem 22rem at 75% -10%, rgba(168,85,247,0.16), transparent 70%)",
+            "radial-gradient(48rem 24rem at 50% -12%, rgba(10,132,255,0.12), transparent 70%)",
         }}
       />
 
       {/* Hero */}
-      <header className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <span className="text-xs font-semibold uppercase tracking-[0.2em] text-accent">
+      <header className="page-shell">
+        <span className="text-xs font-semibold uppercase tracking-[0.14em] text-accent-cyan">
           Learn Mode
         </span>
-        <h1 className="mt-3 max-w-2xl text-3xl font-bold tracking-tight text-foreground sm:text-5xl">
+        <h1 className="mt-3 max-w-2xl text-3xl font-semibold tracking-tight text-foreground sm:text-5xl">
           Learn Atomic Structure
         </h1>
-        <p className="mt-4 max-w-2xl text-base leading-relaxed text-muted sm:text-lg">
+        <p className="mt-4 max-w-2xl text-base leading-relaxed text-secondary sm:text-lg">
           Master elements, particles, isotopes, electron shells, and quantum
           orbitals through guided visual lessons.
         </p>

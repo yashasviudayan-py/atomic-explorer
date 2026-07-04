@@ -50,7 +50,9 @@ export function AtomViewer({ element }: AtomViewerProps) {
 
   const [selectedIsotope, setSelectedIsotope] = useState<Isotope>(isotopes[0]);
   const [selected, setSelected] = useState<SelectedParticle>(null);
-  const [showLabels, setShowLabels] = useState(true);
+  // Labels start off so the atom reads clean; the toggle and guided tour
+  // bring them back when wanted.
+  const [showLabels, setShowLabels] = useState(false);
   const [paused, setPaused] = useState(false);
   const [speed, setSpeed] = useState<SpeedOption>(1);
   const [modelMode, setModelMode] = useState<AtomicModelMode>("bohr");
@@ -69,15 +71,16 @@ export function AtomViewer({ element }: AtomViewerProps) {
     [protons, neutrons],
   );
 
-  // Frame the camera so the outermost shell / cloud comfortably fits.
+  // Frame the camera so the outermost shell / cloud comfortably fits the
+  // narrower 36° field of view (less perspective distortion).
   const cameraPosition = useMemo<[number, number, number]>(() => {
     const outerRadius = isQuantum
       ? getOrbitalLayerRadius(
           getOrbitalTypesForBlock(element.block).at(-1) ?? "s",
         )
       : getElectronShellRadius(Math.max(0, element.shells.length - 1));
-    const distance = outerRadius * 1.9 + 6;
-    return [distance * 0.25, distance * 0.32, distance];
+    const distance = outerRadius * 2.3 + 7;
+    return [distance * 0.22, distance * 0.28, distance];
   }, [isQuantum, element.block, element.shells.length]);
 
   // Pause/play and the 0× preset both stop motion.
@@ -111,32 +114,30 @@ export function AtomViewer({ element }: AtomViewerProps) {
 
   return (
     <div className="flex flex-col gap-3">
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
         <div className="flex flex-col gap-3">
           <IsotopeSelector
-            element={element}
             selectedIsotope={selectedIsotope}
             isotopes={isotopes}
             onChange={setSelectedIsotope}
-            accent={accent}
           />
 
           {/* Canvas card */}
           <div
-            className="glass-panel relative h-[26rem] overflow-hidden rounded-3xl sm:h-[34rem]"
+            className="glass-panel-subtle relative h-[clamp(24rem,60vh,32rem)] overflow-hidden rounded-3xl lg:h-[clamp(560px,70vh,820px)]"
             style={{ ["--accent" as string]: accent }}
           >
-            {/* Radial accent glow behind the canvas */}
+            {/* Faint radial accent glow anchoring the atom */}
             <div
               aria-hidden="true"
-              className="pointer-events-none absolute inset-0 opacity-40"
+              className="pointer-events-none absolute inset-0 opacity-25"
               style={{
-                background: `radial-gradient(60% 60% at 50% 45%, ${accent}1f, transparent 70%)`,
+                background: `radial-gradient(55% 55% at 50% 45%, ${accent}1c, transparent 70%)`,
               }}
             />
             <Canvas
-              dpr={[1, 2]}
-              camera={{ position: cameraPosition, fov: 45 }}
+              dpr={[1, 1.75]}
+              camera={{ position: cameraPosition, fov: 36 }}
               gl={{ antialias: true }}
               onPointerMissed={() => setSelected(null)}
               style={{ background: "transparent" }}
@@ -156,7 +157,7 @@ export function AtomViewer({ element }: AtomViewerProps) {
               />
             </Canvas>
 
-            <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full border border-white/10 bg-black/40 px-3 py-1 text-[0.7rem] text-muted backdrop-blur">
+            <span className="pointer-events-none absolute bottom-3 left-1/2 -translate-x-1/2 whitespace-nowrap rounded-full border border-white/10 bg-black/60 px-3 py-1 text-[0.7rem] text-muted backdrop-blur">
               {isQuantum
                 ? "Drag to rotate · scroll to zoom · click the cloud"
                 : "Drag to rotate · scroll to zoom · click a particle"}

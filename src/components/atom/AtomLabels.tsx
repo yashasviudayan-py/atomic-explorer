@@ -20,32 +20,29 @@ interface LabelDef {
 }
 
 /**
- * Floating Drei `Html` annotations identifying the key parts of the atom. The
- * label set adapts to the active model: Bohr labels name the proton, neutron,
- * electron and shell; quantum labels name the nucleus, probability cloud and
- * orbital region, plus a short reminder that denser regions are simply more
- * likely electron locations. Dark translucent chips keep them readable on OLED
- * black without cluttering the scene.
+ * Floating Drei `Html` annotations identifying the key parts of the atom.
+ * Deliberately minimal: only the essential labels per model, placed away from
+ * the nucleus so they never cover the atom. Small dark-glass capsules with a
+ * hairline border and an accent dot keep them quiet on OLED black.
  */
 export function AtomLabels({ mode, shellCount, orbitalRadius }: AtomLabelsProps) {
   const labels: LabelDef[] =
     mode === "quantum"
       ? [
-          { text: "Nucleus", position: [0, 1.5, 0], accent: "#ff9bb4" },
+          {
+            text: "Nucleus",
+            position: [0, orbitalRadius * 0.28, 0],
+            accent: "#ff8fa8",
+          },
           {
             text: "Probability cloud",
-            position: [0, orbitalRadius * 0.62, orbitalRadius * 0.55],
-            accent: "#7fe8ff",
+            position: [0, orbitalRadius * 0.72, orbitalRadius * 0.5],
+            accent: "#9fe0ff",
           },
           {
             text: "Orbital region",
-            position: [orbitalRadius * 0.78, 0.1, 0],
-            accent: "#b9a8ff",
-          },
-          {
-            text: "Denser = more likely electron location",
-            position: [0, -orbitalRadius * 0.7, 0],
-            accent: "#9ec5ff",
+            position: [orbitalRadius * 0.95, -orbitalRadius * 0.2, 0],
+            accent: "#a9a6ff",
           },
         ]
       : bohrLabels(shellCount);
@@ -63,20 +60,31 @@ export function AtomLabels({ mode, shellCount, orbitalRadius }: AtomLabelsProps)
         >
           <div
             style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "6px",
               whiteSpace: "nowrap",
               padding: "3px 10px",
               borderRadius: "9999px",
               fontSize: "12px",
-              fontWeight: 600,
-              letterSpacing: "0.02em",
-              color: "#e7ecff",
-              background: "rgba(5, 6, 15, 0.72)",
-              border: `1px solid ${label.accent}66`,
-              boxShadow: `0 0 14px -4px ${label.accent}aa`,
-              backdropFilter: "blur(6px)",
+              fontWeight: 500,
+              letterSpacing: "0.01em",
+              color: "#f5f5f7",
+              background: "rgba(0, 0, 0, 0.72)",
+              border: "1px solid rgba(255, 255, 255, 0.16)",
+              backdropFilter: "blur(8px)",
             }}
           >
-            <span style={{ color: label.accent }}>●</span> {label.text}
+            <span
+              style={{
+                width: "5px",
+                height: "5px",
+                borderRadius: "9999px",
+                background: label.accent,
+                flexShrink: 0,
+              }}
+            />
+            {label.text}
           </div>
         </Html>
       ))}
@@ -84,22 +92,21 @@ export function AtomLabels({ mode, shellCount, orbitalRadius }: AtomLabelsProps)
   );
 }
 
-/** Bohr-model labels: nucleus, proton, neutron, electron and shell. */
+/** Bohr-model essentials: nucleus, electron, and shell — placed clear of the
+ * nucleus cluster (protons/neutrons are explained on click instead). */
 function bohrLabels(shellCount: number): LabelDef[] {
   const outerRadius = getElectronShellRadius(Math.max(0, shellCount - 1));
   return [
-    { text: "Nucleus", position: [0, 1.5, 0], accent: "#ff9bb4" },
-    { text: "Proton", position: [1.4, -0.2, 0.4], accent: "#ff5d7e" },
-    { text: "Neutron", position: [-1.5, 0.2, -0.4], accent: "#5fc8ff" },
+    { text: "Nucleus", position: [0, 1.6, 0], accent: "#ff8fa8" },
     {
       text: "Electron",
       position: [0, outerRadius * 0.55, outerRadius * 0.85],
-      accent: "#cdeeff",
+      accent: "#eaf6ff",
     },
     {
       text: "Electron shell",
-      position: [outerRadius + 0.4, 0.1, 0],
-      accent: "#6fd6ff",
+      position: [outerRadius + 0.5, -0.3, 0],
+      accent: "#64d2ff",
     },
   ];
 }

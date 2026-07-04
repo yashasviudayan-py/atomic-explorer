@@ -20,8 +20,8 @@ export default function RootLayout({
         <div className="app-backdrop" aria-hidden="true" />
         <Header />
         <main className="relative">{children}</main>
-        <footer className="border-t border-white/5 py-8">
-          <div className="mx-auto max-w-7xl px-4 text-center text-sm text-muted sm:px-6 lg:px-8">
+        <footer className="border-t border-white/10 py-8">
+          <div className="page-shell text-center text-sm text-muted">
             {APP_NAME} · An interactive journey into the structure of matter.
           </div>
         </footer>
