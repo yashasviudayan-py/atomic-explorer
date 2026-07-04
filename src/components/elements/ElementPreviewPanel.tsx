@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Element } from "@/types/element";
 import { CATEGORY_META } from "@/lib/elementCategories";
+import { ChevronRight } from "@/components/ui/Icon";
 
 interface ElementPreviewPanelProps {
   element: Element;
@@ -15,16 +16,9 @@ export function ElementPreviewPanel({ element }: ElementPreviewPanelProps) {
 
   return (
     <aside
-      className="glass-panel relative overflow-hidden rounded-2xl p-5"
+      className="glass-panel-subtle relative overflow-hidden rounded-2xl p-5"
       style={{ ["--accent" as string]: meta.accent }}
     >
-      {/* Category glow bloom */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-12 -top-12 h-40 w-40 rounded-full opacity-30 blur-3xl"
-        style={{ background: meta.accent }}
-      />
-
       <div className="relative flex items-start justify-between gap-4">
         <div
           className={`flex h-20 w-20 shrink-0 flex-col items-center justify-center rounded-xl border ${meta.tileBg} ${meta.border}`}
@@ -53,7 +47,7 @@ export function ElementPreviewPanel({ element }: ElementPreviewPanelProps) {
         </div>
       </div>
 
-      <p className="relative mt-4 text-sm leading-relaxed text-muted">
+      <p className="relative mt-4 text-sm leading-relaxed text-secondary">
         {element.summary}
       </p>
 
@@ -65,7 +59,7 @@ export function ElementPreviewPanel({ element }: ElementPreviewPanelProps) {
       </dl>
 
       <div className="relative mt-3">
-        <dt className="text-xs uppercase tracking-wide text-muted">
+        <dt className="text-xs uppercase tracking-wide text-muted-2">
           Electron configuration
         </dt>
         <dd className="mt-1 font-mono text-sm text-foreground">
@@ -83,7 +77,7 @@ export function ElementPreviewPanel({ element }: ElementPreviewPanelProps) {
         }}
       >
         Explore Atom
-        <span aria-hidden="true">→</span>
+        <ChevronRight className="h-4 w-4" />
       </Link>
     </aside>
   );
@@ -91,8 +85,8 @@ export function ElementPreviewPanel({ element }: ElementPreviewPanelProps) {
 
 function Stat({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-lg border border-white/5 bg-white/[0.02] px-3 py-2">
-      <dt className="text-xs text-muted">{label}</dt>
+    <div className="rounded-lg border border-white/10 bg-white/[0.04] px-3 py-2">
+      <dt className="text-xs text-muted-2">{label}</dt>
       <dd className="mt-0.5 font-mono text-foreground">{value}</dd>
     </div>
   );

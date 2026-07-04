@@ -46,7 +46,7 @@ export function ElementTile({
       onMouseLeave={() => onPreview?.(null)}
       className={[
         "group relative flex flex-col justify-between rounded-md border p-1 text-center",
-        "outline-none transition-all duration-200",
+        "outline-none transition-all duration-200 ease-spring",
         variant === "grid"
           ? "aspect-square"
           : "aspect-square min-h-[4.5rem]",
@@ -62,16 +62,14 @@ export function ElementTile({
       <span className="flex items-center justify-between text-[0.5rem] leading-none text-foreground/60 sm:text-[0.55rem]">
         <span>{element.atomicNumber}</span>
       </span>
-      <span
-        className={`text-sm font-semibold leading-none sm:text-base lg:text-lg ${meta.text}`}
-      >
+      <span className="text-sm font-semibold leading-none text-foreground sm:text-base lg:text-lg">
         {element.symbol}
       </span>
       <span className="flex flex-col gap-px leading-none">
-        <span className="truncate text-[0.45rem] text-foreground/80 sm:text-[0.5rem]">
+        <span className="truncate text-[0.45rem] text-foreground/85 sm:text-[0.5rem]">
           {element.name}
         </span>
-        <span className="text-[0.45rem] text-foreground/40 sm:text-[0.5rem]">
+        <span className="text-[0.45rem] text-foreground/45 sm:text-[0.5rem]">
           {element.atomicMass}
         </span>
       </span>

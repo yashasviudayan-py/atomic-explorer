@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { ELEMENTS, getElementBySymbol } from "@/data/elements";
 import { CATEGORY_META } from "@/lib/elementCategories";
 import { AtomViewerClient } from "@/components/atom/AtomViewerClient";
+import { ChevronLeft } from "@/components/ui/Icon";
 
 interface ElementDetailPageProps {
   // In the Next.js App Router (v15+), dynamic route params are async.
@@ -42,78 +43,65 @@ export default async function ElementDetailPage({
   const meta = CATEGORY_META[element.category];
 
   return (
-    <article className="relative mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
-      {/* Tasteful category-accent radial glow anchoring the dashboard. */}
+    <article className="page-shell relative py-10 lg:py-14">
+      {/* Faint category-accent bloom anchoring the page against true black. */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[28rem] opacity-30"
+        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[26rem] opacity-20"
         style={{
-          background: `radial-gradient(60rem 28rem at 50% -10%, ${meta.accent}22, transparent 70%)`,
+          background: `radial-gradient(70rem 26rem at 50% -12%, ${meta.accent}1f, transparent 70%)`,
         }}
       />
       <Link
         href="/elements"
-        className="inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
+        className="inline-flex items-center gap-1.5 text-sm text-muted transition-colors hover:text-foreground"
       >
-        <span aria-hidden="true">←</span> Back to Periodic Table
+        <ChevronLeft className="h-4 w-4" /> Back to Periodic Table
       </Link>
 
-      {/* Hero */}
-      <header
-        className="glass-panel relative mt-6 overflow-hidden rounded-3xl p-6 sm:p-8"
-        style={{ ["--accent" as string]: meta.accent }}
-      >
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full opacity-30 blur-3xl"
-          style={{ background: meta.accent }}
-        />
-        <div className="relative flex flex-col gap-6 sm:flex-row sm:items-center">
-          <div
-            className={`flex h-28 w-28 shrink-0 flex-col items-center justify-center rounded-2xl border ${meta.tileBg} ${meta.border}`}
+      {/* Hero — quiet product-style header on black, no boxed glass. */}
+      <header className="mt-8 flex flex-col-reverse items-start justify-between gap-8 border-b border-white/10 pb-10 sm:flex-row sm:items-center">
+        <div className="min-w-0 max-w-2xl">
+          <span
+            className="text-xs font-semibold uppercase tracking-[0.12em]"
+            style={{ color: meta.accent }}
           >
-            <span className="text-xs text-foreground/60">
-              {element.atomicNumber}
-            </span>
-            <span className={`text-5xl font-bold ${meta.text}`}>
-              {element.symbol}
-            </span>
-            <span className="text-xs text-foreground/50">
-              {element.atomicMass}
-            </span>
-          </div>
-          <div className="min-w-0">
-            <span
-              className="inline-flex items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium"
-              style={{
-                borderColor: `color-mix(in srgb, ${meta.accent} 45%, transparent)`,
-                color: meta.accent,
-                background: `color-mix(in srgb, ${meta.accent} 12%, transparent)`,
-              }}
-            >
-              {meta.label}
-            </span>
-            <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
-              {element.name}
-            </h1>
-            <p className="mt-3 max-w-xl text-base leading-relaxed text-muted">
-              {element.summary}
-            </p>
+            {meta.label}
+          </span>
+          <h1 className="mt-2 text-4xl font-semibold tracking-tight text-foreground sm:text-5xl">
+            {element.name}
+          </h1>
+          <p className="mt-4 text-base leading-relaxed text-secondary sm:text-lg">
+            {element.summary}
+          </p>
 
-            {/* Metadata chips */}
-            <div className="mt-4 flex flex-wrap gap-2">
-              <Chip label="Atomic #" value={String(element.atomicNumber)} />
-              <Chip label="Block" value={`${element.block}-block`} />
-              <Chip label="Period" value={String(element.period)} />
-              <Chip label="Group" value={element.group ? String(element.group) : "—"} />
-            </div>
+          {/* Metadata row */}
+          <div className="mt-6 flex flex-wrap gap-2">
+            <Chip label="Atomic #" value={String(element.atomicNumber)} />
+            <Chip label="Mass" value={element.atomicMass} />
+            <Chip label="Block" value={`${element.block}-block`} />
+            <Chip label="Period" value={String(element.period)} />
+            <Chip label="Group" value={element.group ? String(element.group) : "—"} />
           </div>
+        </div>
+
+        {/* Large symbol display */}
+        <div className="flex shrink-0 flex-col items-center sm:items-end">
+          <span
+            className="text-7xl font-semibold leading-none tracking-tight sm:text-8xl"
+            style={{ color: meta.accent }}
+          >
+            {element.symbol}
+          </span>
+          <span className="mt-2 font-mono text-sm text-muted">
+            {element.atomicNumber} · {element.atomicMass}
+          </span>
         </div>
       </header>
 
       {/* 3D Atom Explorer — viewer carries the isotope selector and the
           isotope-aware particle information panel. */}
-      <section className="mt-8">
+      <section className="mt-10">
         <SectionHeading
           eyebrow="3D Atom Explorer"
           title={`Inside the ${element.name} atom`}
@@ -124,7 +112,7 @@ export default async function ElementDetailPage({
           teaching model with a more realistic probability-based view, and follow
           the guided tour to explore the {element.name} atom step by step.
         </p>
-        <div className="mt-4">
+        <div className="mt-5">
           <AtomViewerClient element={element} />
         </div>
       </section>
@@ -132,8 +120,8 @@ export default async function ElementDetailPage({
       {/* Electron configuration + shell distribution */}
       <section className="mt-8 grid gap-4 lg:grid-cols-2">
         {/* Electron configuration */}
-        <div className="glass-panel rounded-2xl p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
+        <div className="glass-panel-subtle rounded-2xl p-5">
+          <h2 className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-muted-2">
             Electron configuration
           </h2>
           <p className="mt-2 font-mono text-lg text-foreground">
@@ -147,20 +135,22 @@ export default async function ElementDetailPage({
         </div>
 
         {/* Shell distribution */}
-        <div className="glass-panel rounded-2xl p-5">
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
+        <div className="glass-panel-subtle rounded-2xl p-5">
+          <h2 className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-muted-2">
             Shell distribution
           </h2>
           <div className="mt-3 flex flex-wrap gap-2">
             {element.shells.map((count, index) => (
               <span
                 key={index}
-                className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.03] px-3 py-1.5 text-sm text-muted"
+                className="inline-flex items-center gap-2 rounded-lg border border-white/10 bg-white/[0.05] px-3 py-1.5 text-sm text-secondary"
               >
-                <span className="text-xs uppercase tracking-wide text-muted/70">
+                <span className="text-xs uppercase tracking-wide text-muted">
                   Shell {index + 1}
                 </span>
-                <span className="font-mono text-foreground">{count} e⁻</span>
+                <span className="font-mono font-medium text-foreground">
+                  {count} e⁻
+                </span>
               </span>
             ))}
           </div>
@@ -172,8 +162,8 @@ export default async function ElementDetailPage({
       </section>
 
       {/* Summary / properties */}
-      <section className="mt-4 glass-panel rounded-2xl p-5">
-        <h2 className="text-xs font-semibold uppercase tracking-wider text-muted">
+      <section className="glass-panel-subtle mt-4 rounded-2xl p-5">
+        <h2 className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-muted-2">
           Summary
         </h2>
         <dl className="mt-3 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -192,9 +182,9 @@ export default async function ElementDetailPage({
       <div className="mt-8">
         <Link
           href="/elements"
-          className="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-foreground transition-all hover:border-white/25 hover:bg-white/10"
+          className="inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-foreground transition-all hover:border-white/25 hover:bg-white/10"
         >
-          <span aria-hidden="true">←</span> Back to Periodic Table
+          <ChevronLeft className="h-4 w-4" /> Back to Periodic Table
         </Link>
       </div>
     </article>
@@ -213,12 +203,12 @@ function SectionHeading({
   return (
     <div>
       <span
-        className="text-xs font-semibold uppercase tracking-wider"
+        className="text-xs font-semibold uppercase tracking-[0.12em]"
         style={{ color: accent }}
       >
         {eyebrow}
       </span>
-      <h2 className="mt-1 text-xl font-bold text-foreground sm:text-2xl">
+      <h2 className="mt-1 text-xl font-semibold tracking-tight text-foreground sm:text-2xl">
         {title}
       </h2>
     </div>
@@ -227,17 +217,17 @@ function SectionHeading({
 
 function Chip({ label, value }: { label: string; value: string }) {
   return (
-    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs">
-      <span className="uppercase tracking-wide text-muted/70">{label}</span>
-      <span className="font-mono text-foreground">{value}</span>
+    <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/[0.05] px-3 py-1 text-xs">
+      <span className="uppercase tracking-wide text-muted">{label}</span>
+      <span className="font-mono font-medium text-foreground">{value}</span>
     </span>
   );
 }
 
 function Property({ label, value }: { label: string; value: string }) {
   return (
-    <div className="rounded-xl border border-white/10 bg-white/[0.02] px-4 py-3">
-      <dt className="text-xs uppercase tracking-wide text-muted">{label}</dt>
+    <div className="rounded-xl border border-white/10 bg-white/[0.04] px-4 py-3">
+      <dt className="text-xs uppercase tracking-wide text-muted-2">{label}</dt>
       <dd className="mt-1 font-mono text-base text-foreground">{value}</dd>
     </div>
   );
