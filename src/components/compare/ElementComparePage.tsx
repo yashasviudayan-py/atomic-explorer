@@ -114,16 +114,16 @@ export function ElementComparePage({
   );
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-12 sm:px-6 lg:px-8 lg:py-16">
+    <div className="page-shell py-10 lg:py-14">
       {/* Header */}
       <header className="relative">
-        <span className="text-xs font-semibold uppercase tracking-wider text-accent">
+        <span className="text-xs font-semibold uppercase tracking-[0.12em] text-accent-cyan">
           Compare
         </span>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
+        <h1 className="mt-2 text-3xl font-semibold tracking-tight text-foreground sm:text-4xl lg:text-5xl">
           Compare Elements
         </h1>
-        <p className="mt-3 max-w-2xl text-base leading-relaxed text-muted">
+        <p className="mt-3 max-w-2xl text-base leading-relaxed text-secondary">
           Place two elements side by side to compare their atomic structure,
           particles, isotopes, shells, and electron behavior.
         </p>
@@ -218,7 +218,7 @@ export function ElementComparePage({
       </section>
 
       {/* Honesty footer */}
-      <p className="mt-10 rounded-2xl border border-white/5 bg-white/[0.02] px-5 py-4 text-xs leading-relaxed text-muted/80">
+      <p className="mt-10 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-4 text-xs leading-relaxed text-muted">
         This is an educational comparison. Atom previews use a simplified
         Bohr-style model and are not drawn to scale; Bohr rings are a teaching
         abstraction rather than physically exact orbits. Electron counts assume a
@@ -233,10 +233,10 @@ export function ElementComparePage({
 /** Compact, consistent section header with an optional right-aligned hint. */
 function SectionHeading({ title, hint }: { title: string; hint?: string }) {
   return (
-    <div className="flex items-baseline justify-between gap-3 border-b border-white/5 pb-2">
-      <h2 className="text-lg font-bold text-foreground sm:text-xl">{title}</h2>
+    <div className="flex items-baseline justify-between gap-3 border-b border-white/10 pb-2">
+      <h2 className="text-lg font-semibold tracking-tight text-foreground sm:text-xl">{title}</h2>
       {hint && (
-        <span className="text-[0.65rem] uppercase tracking-wide text-muted">
+        <span className="text-[0.65rem] uppercase tracking-wide text-muted-2">
           {hint}
         </span>
       )}

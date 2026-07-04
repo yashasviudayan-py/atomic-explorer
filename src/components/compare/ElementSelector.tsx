@@ -5,6 +5,7 @@ import type { Element } from "@/types/element";
 import { ELEMENTS } from "@/data/elements";
 import { CATEGORY_META } from "@/lib/elementCategories";
 import { matchesQuery } from "@/lib/elementFilter";
+import { Check, ChevronDown, Search } from "@/components/ui/Icon";
 
 interface ElementSelectorProps {
   /** Which side this selector controls (drives labelling only). */
@@ -130,7 +131,7 @@ export function ElementSelector({
         aria-haspopup="listbox"
         aria-expanded={open}
         aria-controls={listboxId}
-        className="glass-panel flex w-full items-center gap-4 rounded-2xl border-white/10 px-4 py-3 text-left transition-all hover:border-white/20 focus:border-[color-mix(in_srgb,var(--accent)_55%,transparent)] focus:shadow-[0_0_28px_-8px_var(--accent)] focus:outline-none"
+        className="glass-panel flex w-full items-center gap-4 rounded-2xl border-white/10 px-4 py-3 text-left transition-all hover:border-white/20 focus-visible:border-[color-mix(in_srgb,var(--accent)_60%,transparent)] focus-visible:outline-none"
       >
         <span
           className={`flex h-14 w-14 shrink-0 flex-col items-center justify-center rounded-xl border ${meta.tileBg} ${meta.border}`}
@@ -157,24 +158,16 @@ export function ElementSelector({
             {meta.label}
           </span>
         </span>
-        <span
-          aria-hidden="true"
-          className={`shrink-0 text-muted transition-transform ${open ? "rotate-180" : ""}`}
-        >
-          ▾
-        </span>
+        <ChevronDown
+          className={`h-4 w-4 shrink-0 text-muted transition-transform duration-300 ease-spring ${open ? "rotate-180" : ""}`}
+        />
       </button>
 
       {/* Dropdown */}
       {open && (
         <div className="glass-panel absolute z-30 mt-2 w-full overflow-hidden rounded-2xl border-white/10 shadow-2xl shadow-black/60">
           <div className="relative border-b border-white/10 p-2">
-            <span
-              aria-hidden="true"
-              className="pointer-events-none absolute left-4 top-1/2 -translate-y-1/2 text-muted"
-            >
-              ⌕
-            </span>
+            <Search className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-muted" />
             <input
               ref={inputRef}
               type="text"
@@ -243,13 +236,10 @@ export function ElementSelector({
                       aria-hidden="true"
                     />
                     {isSelected && (
-                      <span
-                        aria-hidden="true"
-                        className="shrink-0 text-xs"
+                      <Check
+                        className="h-4 w-4 shrink-0"
                         style={{ color: accent }}
-                      >
-                        ✓
-                      </span>
+                      />
                     )}
                   </li>
                 );
