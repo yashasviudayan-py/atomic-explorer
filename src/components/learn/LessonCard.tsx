@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import type { Lesson } from "@/types/lesson";
+import { Check, ChevronRight } from "@/components/ui/Icon";
 import { DIFFICULTY_META } from "./learnTheme";
 
 interface LessonCardProps {
@@ -23,20 +24,11 @@ export function LessonCard({ lesson, isComplete, isRecommended }: LessonCardProp
   return (
     <Link
       href={`/learn/${lesson.slug}`}
-      className={`glass-panel group relative block overflow-hidden rounded-2xl p-5 transition-all hover:-translate-y-0.5 sm:p-6 ${
-        isRecommended
-          ? "border-accent/40 shadow-[0_0_32px_-10px_var(--color-accent)]"
-          : "hover:border-white/20"
+      className={`glass-panel elevate group relative block overflow-hidden rounded-2xl p-5 hover:-translate-y-0.5 sm:p-6 ${
+        isRecommended ? "border-accent/40" : "hover:border-white/20"
       }`}
       style={{ borderColor: isComplete ? "rgba(52,211,153,0.3)" : undefined }}
     >
-      {/* Hover glow tinted by difficulty */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute -right-14 -top-14 h-40 w-40 rounded-full opacity-0 blur-3xl transition-opacity duration-300 group-hover:opacity-25"
-        style={{ background: difficulty.accent }}
-      />
-
       <div className="relative flex items-start gap-4">
         {/* Order node */}
         <span
@@ -48,7 +40,7 @@ export function LessonCard({ lesson, isComplete, isRecommended }: LessonCardProp
                 : "border-white/15 bg-white/[0.04] text-muted"
           }`}
         >
-          {isComplete ? "✓" : lesson.order}
+          {isComplete ? <Check className="h-5 w-5" /> : lesson.order}
         </span>
 
         <div className="min-w-0 flex-1">
@@ -99,11 +91,12 @@ export function LessonCard({ lesson, isComplete, isRecommended }: LessonCardProp
               ))}
             </div>
             <span
-              className={`shrink-0 text-sm font-semibold transition-transform group-hover:translate-x-0.5 ${
+              className={`inline-flex shrink-0 items-center gap-1 text-sm font-semibold transition-transform duration-300 ease-spring group-hover:translate-x-0.5 ${
                 isComplete ? "text-emerald-300" : "text-accent"
               }`}
             >
-              {isComplete ? "Review →" : isRecommended ? "Continue →" : "Start lesson →"}
+              {isComplete ? "Review" : isRecommended ? "Continue" : "Start lesson"}
+              <ChevronRight className="h-4 w-4" />
             </span>
           </div>
         </div>

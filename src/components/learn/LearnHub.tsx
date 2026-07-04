@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
 import { getSortedLessons } from "@/data/lessons";
 import { getLessonProgress } from "@/lib/lessonProgress";
+import { ChevronRight } from "@/components/ui/Icon";
 import { LearningPath } from "./LearningPath";
 import { ProgressSummary } from "./ProgressSummary";
 
@@ -32,7 +33,7 @@ export function LearnHub() {
     lessons.find((lesson) => !completedSlugs.includes(lesson.slug)) ?? null;
 
   return (
-    <div className="mx-auto grid max-w-6xl gap-6 px-4 sm:px-6 lg:grid-cols-[1fr_20rem] lg:items-start lg:px-8">
+    <div className="page-shell grid gap-6 lg:grid-cols-[minmax(0,1fr)_22rem] lg:items-start">
       {/* Course map */}
       <section aria-label="Learning path">
         <div className="mb-4 flex items-baseline justify-between gap-3">
@@ -76,16 +77,11 @@ export function LearnHub() {
                   All 118 elements, interactive
                 </span>
               </span>
-              <span
-                aria-hidden="true"
-                className="text-muted transition-all group-hover:translate-x-0.5 group-hover:text-accent"
-              >
-                →
-              </span>
+              <ChevronRight className="h-4 w-4 text-muted transition-all duration-300 ease-spring group-hover:translate-x-0.5 group-hover:text-accent" />
             </Link>
             <Link
               href="/compare"
-              className="group flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-all hover:border-accent-violet/40 hover:bg-accent-violet/[0.07]"
+              className="group flex items-center justify-between gap-3 rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 transition-all hover:border-accent/40 hover:bg-accent/[0.07]"
             >
               <span>
                 <span className="block text-sm font-semibold text-foreground">
@@ -95,12 +91,7 @@ export function LearnHub() {
                   Side-by-side atomic structure
                 </span>
               </span>
-              <span
-                aria-hidden="true"
-                className="text-muted transition-all group-hover:translate-x-0.5 group-hover:text-accent-violet"
-              >
-                →
-              </span>
+              <ChevronRight className="h-4 w-4 text-muted transition-all duration-300 ease-spring group-hover:translate-x-0.5 group-hover:text-accent" />
             </Link>
           </div>
         </div>

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import type { Lesson } from "@/types/lesson";
 import { isLessonComplete } from "@/lib/lessonProgress";
+import { Check, ChevronLeft, ChevronRight } from "@/components/ui/Icon";
 import { DIFFICULTY_META } from "./learnTheme";
 import { LessonStepper } from "./LessonStepper";
 import { RelatedElements } from "./RelatedElements";
@@ -32,16 +33,7 @@ export function LessonPage({ lesson, previousLesson, nextLesson }: LessonPagePro
   }, [lesson.slug]);
 
   return (
-    <article className="relative mx-auto max-w-6xl px-4 py-10 sm:px-6 lg:px-8 lg:py-14">
-      {/* Ambient difficulty-tinted glow */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 -z-10 h-[26rem] opacity-30"
-        style={{
-          background: `radial-gradient(56rem 26rem at 50% -10%, ${difficulty.accent}22, transparent 70%)`,
-        }}
-      />
-
+    <article className="page-shell relative py-10 lg:py-14">
       {/* Breadcrumb */}
       <nav aria-label="Breadcrumb" className="flex items-center gap-2 text-sm text-muted">
         <Link href="/learn" className="transition-colors hover:text-foreground">
@@ -55,11 +47,6 @@ export function LessonPage({ lesson, previousLesson, nextLesson }: LessonPagePro
 
       {/* Lesson header */}
       <header className="glass-panel relative mt-5 overflow-hidden rounded-3xl p-6 sm:p-8">
-        <div
-          aria-hidden="true"
-          className="pointer-events-none absolute -right-16 -top-16 h-52 w-52 rounded-full opacity-25 blur-3xl"
-          style={{ background: difficulty.accent }}
-        />
         <div className="relative">
           <div className="flex flex-wrap items-center gap-2">
             <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1 font-mono text-xs text-muted">
@@ -74,8 +61,8 @@ export function LessonPage({ lesson, previousLesson, nextLesson }: LessonPagePro
               ~{lesson.estimatedMinutes} min
             </span>
             {completed && (
-              <span className="rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300">
-                ✓ Completed
+              <span className="inline-flex items-center gap-1 rounded-full border border-emerald-400/40 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300">
+                <Check className="h-3.5 w-3.5" /> Completed
               </span>
             )}
           </div>
@@ -118,8 +105,8 @@ export function LessonPage({ lesson, previousLesson, nextLesson }: LessonPagePro
             href={`/learn/${previousLesson.slug}`}
             className="glass-panel group rounded-2xl p-4 transition-all hover:border-white/20"
           >
-            <span className="text-[0.65rem] uppercase tracking-wide text-muted">
-              ← Previous lesson
+            <span className="inline-flex items-center gap-1 text-[0.65rem] uppercase tracking-wide text-muted">
+              <ChevronLeft className="h-3 w-3" /> Previous lesson
             </span>
             <span className="mt-1 block truncate text-sm font-semibold text-foreground group-hover:text-accent">
               {previousLesson.title}
@@ -139,8 +126,8 @@ export function LessonPage({ lesson, previousLesson, nextLesson }: LessonPagePro
             href={`/learn/${nextLesson.slug}`}
             className="glass-panel group rounded-2xl p-4 text-right transition-all hover:border-white/20"
           >
-            <span className="text-[0.65rem] uppercase tracking-wide text-muted">
-              Next lesson →
+            <span className="inline-flex items-center justify-end gap-1 text-[0.65rem] uppercase tracking-wide text-muted">
+              Next lesson <ChevronRight className="h-3 w-3" />
             </span>
             <span className="mt-1 block truncate text-sm font-semibold text-foreground group-hover:text-accent">
               {nextLesson.title}

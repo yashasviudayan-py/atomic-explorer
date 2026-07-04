@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import type { Lesson } from "@/types/lesson";
+import { Check, ChevronLeft, ChevronRight } from "@/components/ui/Icon";
 import { markLessonComplete } from "@/lib/lessonProgress";
 import { LessonStepCard } from "./LessonStepCard";
 import { LessonVisualPanel } from "./LessonVisualPanel";
@@ -79,7 +80,7 @@ export function LessonStepper({ lesson, nextLesson }: LessonStepperProps) {
         </span>
         <div className="h-1.5 flex-1 overflow-hidden rounded-full bg-white/5">
           <span
-            className="block h-full rounded-full bg-gradient-to-r from-accent to-accent-violet transition-all duration-500"
+            className="block h-full rounded-full bg-gradient-to-r from-accent to-accent-cyan transition-all duration-500 ease-spring"
             style={{ width: `${progressPct}%` }}
           />
         </div>
@@ -109,9 +110,9 @@ export function LessonStepper({ lesson, nextLesson }: LessonStepperProps) {
           type="button"
           onClick={() => setStepIndex((index) => Math.max(index - 1, 0))}
           disabled={stepIndex === 0}
-          className="rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-foreground transition-all hover:border-white/25 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-white/15 disabled:hover:bg-white/5"
+          className="inline-flex items-center gap-1 rounded-xl border border-white/15 bg-white/5 px-5 py-2.5 text-sm font-semibold text-foreground transition-all hover:border-white/25 hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-35 disabled:hover:border-white/15 disabled:hover:bg-white/5"
         >
-          ← Previous
+          <ChevronLeft className="h-4 w-4" /> Previous
         </button>
 
         {/* Step dots */}
@@ -135,9 +136,17 @@ export function LessonStepper({ lesson, nextLesson }: LessonStepperProps) {
           onClick={handleNext}
           disabled={checkpointBlocked}
           title={checkpointBlocked ? "Answer the checkpoint to continue" : undefined}
-          className="rounded-xl border border-accent/40 bg-accent/10 px-5 py-2.5 text-sm font-semibold text-accent shadow-[0_0_20px_-6px_var(--color-accent)] transition-all hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-accent/10"
+          className="inline-flex items-center gap-1 rounded-xl border border-accent/40 bg-accent/10 px-5 py-2.5 text-sm font-semibold text-accent transition-all hover:bg-accent/20 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-accent/10"
         >
-          {isLast ? "Finish lesson ✓" : "Next →"}
+          {isLast ? (
+            <>
+              Finish lesson <Check className="h-4 w-4" />
+            </>
+          ) : (
+            <>
+              Next <ChevronRight className="h-4 w-4" />
+            </>
+          )}
         </button>
       </div>
     </div>

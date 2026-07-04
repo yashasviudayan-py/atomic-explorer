@@ -1,6 +1,7 @@
 "use client";
 
 import type { LessonStep } from "@/types/lesson";
+import { Check, Close } from "@/components/ui/Icon";
 
 interface LessonCheckpointProps {
   checkpoint: NonNullable<LessonStep["checkpoint"]>;
@@ -44,11 +45,9 @@ export function LessonCheckpoint({
             "border-white/10 bg-white/[0.03] hover:border-white/25 hover:bg-white/[0.06]";
           if (answered) {
             if (isSelected && option.isCorrect) {
-              stateClasses =
-                "border-emerald-400/50 bg-emerald-400/10 shadow-[0_0_20px_-8px] shadow-emerald-400/50";
+              stateClasses = "border-emerald-400/50 bg-emerald-400/10";
             } else if (isSelected && !option.isCorrect) {
-              stateClasses =
-                "border-rose-400/50 bg-rose-400/10 shadow-[0_0_20px_-8px] shadow-rose-400/50";
+              stateClasses = "border-rose-400/50 bg-rose-400/10";
             } else if (option.isCorrect) {
               stateClasses = "border-emerald-400/30 bg-emerald-400/5";
             } else {
@@ -75,11 +74,13 @@ export function LessonCheckpoint({
                       : "border-white/20 text-muted"
                 }`}
               >
-                {answered && option.isCorrect
-                  ? "✓"
-                  : answered && isSelected
-                    ? "✕"
-                    : option.id.toUpperCase()}
+                {answered && option.isCorrect ? (
+                  <Check className="h-3.5 w-3.5" />
+                ) : answered && isSelected ? (
+                  <Close className="h-3.5 w-3.5" />
+                ) : (
+                  option.id.toUpperCase()
+                )}
               </span>
               {option.text}
             </button>
