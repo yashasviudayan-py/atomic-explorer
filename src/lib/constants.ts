@@ -28,10 +28,8 @@ export const NAV_LINKS: NavLink[] = [
 export interface FeatureCard {
   title: string;
   description: string;
-  /** Single emoji/glyph used as a lightweight icon for now. */
-  glyph: string;
-  /** Accent color (hex) driving the card's glow. */
-  accent: string;
+  /** Icon id resolved to an SVG in FeatureCards. */
+  icon: "grid" | "atom" | "particles";
 }
 
 export const FEATURE_CARDS: FeatureCard[] = [
@@ -40,23 +38,20 @@ export const FEATURE_CARDS: FeatureCard[] = [
     description:
       "Navigate all 118 elements in a fluid, color-coded grid. Filter by " +
       "category, hover for instant insight, and dive into any element.",
-    glyph: "⊞",
-    accent: "#38bdf8",
+    icon: "grid",
   },
   {
     title: "3D Atomic Visualization",
     description:
       "Watch atoms come to life with orbiting electrons and layered shells, " +
       "rendered in real time for an immersive, hands-on view of structure.",
-    glyph: "◎",
-    accent: "#a855f7",
+    icon: "atom",
   },
   {
     title: "Proton, Neutron & Electron Explorer",
     description:
       "Break each atom down to its core. Inspect particle counts, shell " +
       "configurations, and the forces that hold matter together.",
-    glyph: "⁘",
-    accent: "#f472b6",
+    icon: "particles",
   },
 ];

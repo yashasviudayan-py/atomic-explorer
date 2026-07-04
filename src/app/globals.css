@@ -1,32 +1,68 @@
 @import "tailwindcss";
 
 /**
- * Design tokens for the Atomic Explorer "dark space / science" theme.
- * Exposed to Tailwind v4 via @theme so they're usable as utilities
- * (e.g. text-accent, bg-surface) and as CSS variables.
+ * Design tokens for the Atomic Explorer OLED-first theme.
+ *
+ * Jet-black base, high-contrast white type, and a restrained Apple-style
+ * accent set (precise blue + cyan, violet reserved for orbitals). Exposed to
+ * Tailwind v4 via @theme so they're usable as utilities (e.g. text-accent,
+ * text-muted) and as CSS variables.
  */
 @theme {
-  --color-space-950: #05060f;
-  --color-space-900: #0a0c1a;
-  --color-space-800: #11142a;
-  --color-surface: #12152e;
-  --color-border-subtle: #232746;
+  --color-space-950: #000000;
+  --color-space-900: #050505;
+  --color-space-800: #0a0a0c;
+  --color-surface: rgba(255, 255, 255, 0.045);
+  --color-surface-strong: rgba(255, 255, 255, 0.075);
+  --color-border-subtle: rgba(255, 255, 255, 0.12);
+  --color-border-strong: rgba(255, 255, 255, 0.18);
 
-  --color-accent: #38bdf8;
-  --color-accent-violet: #a855f7;
-  --color-accent-pink: #f472b6;
+  --color-accent: #0a84ff;
+  --color-accent-cyan: #64d2ff;
+  --color-accent-violet: #bf5af2;
+  --color-accent-pink: #ff375f;
 
-  --color-foreground: #e7ecff;
-  --color-muted: #9aa3c7;
+  --color-foreground: #f5f5f7;
+  --color-secondary: #d2d2d7;
+  --color-muted: #a1a1aa;
+  --color-muted-2: #71717a;
+
+  --color-success: #30d158;
+  --color-warning: #ff9f0a;
+  --color-danger: #ff453a;
 
   --font-sans:
-    ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Helvetica,
-    Arial, sans-serif;
+    "SF Pro Display", "SF Pro Text", -apple-system, BlinkMacSystemFont,
+    "Helvetica Neue", "Segoe UI", system-ui, sans-serif;
+  --font-mono:
+    "SF Mono", ui-monospace, Menlo, Monaco, Consolas, monospace;
 
   --animate-orbit-slow: orbit 18s linear infinite;
   --animate-orbit-medium: orbit 12s linear infinite;
   --animate-orbit-fast: orbit 7s linear infinite;
   --animate-float: float 6s ease-in-out infinite;
+
+  /* Apple-like decelerating spring for hover lifts and reveals. Orbit
+     rotation stays linear (constant angular velocity is physically correct). */
+  --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Plain aliases for inline styles and non-Tailwind consumers. */
+:root {
+  --background: #000000;
+  --foreground: #f5f5f7;
+  --muted: #a1a1aa;
+  --muted-2: #71717a;
+  --surface-1: rgba(255, 255, 255, 0.045);
+  --surface-2: rgba(255, 255, 255, 0.075);
+  --border-subtle: rgba(255, 255, 255, 0.12);
+  --border-strong: rgba(255, 255, 255, 0.18);
+  --blue: #0a84ff;
+  --cyan: #64d2ff;
+  --violet: #bf5af2;
+  --green: #30d158;
+  --orange: #ff9f0a;
+  --red: #ff453a;
 }
 
 @keyframes orbit {
@@ -53,17 +89,28 @@ html {
 }
 
 body {
-  background-color: var(--color-space-950);
+  background-color: #000000;
   color: var(--color-foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   min-height: 100vh;
 }
 
+/* Apple-like display tracking on headings; body stays at normal tracking. */
+h1,
+h2 {
+  letter-spacing: -0.025em;
+}
+h3,
+h4 {
+  letter-spacing: -0.01em;
+}
+
 /**
- * Ambient space backdrop: layered radial gradients that read as distant
- * nebulae. Fixed so it stays put while content scrolls over it.
+ * OLED page backdrop: true black with a single, very subtle blue bloom behind
+ * the top of the content. Fixed so it stays put while content scrolls.
  */
 .app-backdrop {
   position: fixed;
@@ -71,46 +118,107 @@ body {
   z-index: -1;
   background:
     radial-gradient(
-      60rem 60rem at 12% -10%,
-      rgba(56, 189, 248, 0.12),
-      transparent 60%
+      90rem 42rem at 50% -14%,
+      rgba(10, 132, 255, 0.07),
+      transparent 65%
     ),
-    radial-gradient(
-      50rem 50rem at 105% 10%,
-      rgba(168, 85, 247, 0.14),
-      transparent 55%
-    ),
-    radial-gradient(
-      45rem 45rem at 50% 120%,
-      rgba(244, 114, 182, 0.1),
-      transparent 60%
-    ),
-    var(--color-space-950);
+    #000000;
 }
 
-/* Subtle starfield using two tiled radial-gradient dot layers. */
+/* Barely-there starfield — depth, not decoration. */
 .app-backdrop::after {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.5), transparent),
-    radial-gradient(1px 1px at 70% 60%, rgba(255, 255, 255, 0.35), transparent),
-    radial-gradient(1px 1px at 40% 80%, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(1px 1px at 85% 25%, rgba(255, 255, 255, 0.3), transparent);
-  background-size: 240px 240px;
-  opacity: 0.6;
+    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 70% 60%, rgba(255, 255, 255, 0.28), transparent),
+    radial-gradient(1px 1px at 40% 80%, rgba(255, 255, 255, 0.32), transparent),
+    radial-gradient(1px 1px at 85% 25%, rgba(255, 255, 255, 0.24), transparent);
+  background-size: 280px 280px;
+  /* Atmosphere, not texture: barely perceptible so content stays the subject. */
+  opacity: 0.1;
 }
 
-/* Reusable glassmorphism surface. */
+/**
+ * Shared page container: full-width with a generous cap so wide screens are
+ * used naturally, and fluid inline padding instead of fixed side margins.
+ */
+.page-shell {
+  width: 100%;
+  max-width: 1680px;
+  margin-inline: auto;
+  padding-inline: clamp(16px, 3vw, 48px);
+}
+
+/* Primary glass surface: neutral white-on-black, hairline border, deep drop. */
 .glass-panel {
   background: linear-gradient(
     180deg,
-    rgba(255, 255, 255, 0.06),
-    rgba(255, 255, 255, 0.02)
+    rgba(255, 255, 255, 0.075),
+    rgba(255, 255, 255, 0.035)
   );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 24px 80px rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(20px);
+}
+
+/* Quieter variant for secondary surfaces. */
+.glass-panel-subtle {
+  background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  backdrop-filter: blur(14px);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(16px);
+}
+
+/**
+ * Chrome elevation: how cards/rows lift on hover. Apple elevates with a soft
+ * neutral shadow (never a colored glow) and eases in on a decelerating spring.
+ */
+.elevate {
+  transition:
+    transform 0.4s var(--ease-spring),
+    border-color 0.4s var(--ease-spring),
+    box-shadow 0.4s var(--ease-spring);
+}
+.elevate:hover {
+  box-shadow: 0 18px 44px -20px rgba(0, 0, 0, 0.85);
+}
+
+/* Apple-style segmented control. Pair .segmented-control with .segment
+   buttons; mark the active one with data-active="true". */
+.segmented-control {
+  display: inline-flex;
+  align-items: stretch;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.segment {
+  border-radius: 7px;
+  padding: 5px 12px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.25rem;
+  white-space: nowrap;
+  color: var(--color-muted);
+  transition:
+    color 0.15s ease,
+    background-color 0.15s ease;
+}
+
+.segment:hover {
+  color: var(--color-foreground);
+}
+
+.segment[data-active="true"] {
+  background: rgba(10, 132, 255, 0.85);
+  color: #ffffff;
 }
 
 @media (prefers-reduced-motion: reduce) {
