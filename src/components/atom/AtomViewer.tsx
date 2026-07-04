@@ -71,15 +71,17 @@ export function AtomViewer({ element }: AtomViewerProps) {
     [protons, neutrons],
   );
 
-  // Frame the camera so the outermost shell / cloud comfortably fits the
-  // narrower 36° field of view (less perspective distortion).
+  // Frame the camera so the atom fills a consistent ~85% of the 36° vertical
+  // field of view regardless of size. The distance scales (almost) purely with
+  // the outermost radius — a large additive constant would push small atoms
+  // (few shells) far away and leave them tiny in a sea of black.
   const cameraPosition = useMemo<[number, number, number]>(() => {
     const outerRadius = isQuantum
       ? getOrbitalLayerRadius(
           getOrbitalTypesForBlock(element.block).at(-1) ?? "s",
         )
       : getElectronShellRadius(Math.max(0, element.shells.length - 1));
-    const distance = outerRadius * 2.3 + 7;
+    const distance = outerRadius * 2.8 + 0.6;
     return [distance * 0.22, distance * 0.28, distance];
   }, [isQuantum, element.block, element.shells.length]);
 
@@ -124,7 +126,7 @@ export function AtomViewer({ element }: AtomViewerProps) {
 
           {/* Canvas card */}
           <div
-            className="glass-panel-subtle relative h-[clamp(24rem,60vh,32rem)] overflow-hidden rounded-3xl lg:h-[clamp(560px,70vh,820px)]"
+            className="glass-panel-subtle relative h-[clamp(26rem,66vh,38rem)] overflow-hidden rounded-3xl lg:h-[clamp(600px,74vh,860px)]"
             style={{ ["--accent" as string]: accent }}
           >
             {/* Faint radial accent glow anchoring the atom */}
