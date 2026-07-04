@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import type { Element } from "@/types/element";
+import { ChevronLeft, ChevronRight } from "@/components/ui/Icon";
 import type {
   AtomicModelMode,
   AtomVisualMode,
@@ -102,7 +103,7 @@ interface GuidedExplorerProps {
  * particle, and turning labels on — so the 3D scene follows along. Step state
  * lives here; the viewer just receives the focus to apply.
  */
-export function GuidedExplorer({ element, accent, onApply }: GuidedExplorerProps) {
+export function GuidedExplorer({ element, onApply }: GuidedExplorerProps) {
   const [stepIndex, setStepIndex] = useState(0);
   const step = STEPS[stepIndex];
   const isFirst = stepIndex === 0;
@@ -112,12 +113,9 @@ export function GuidedExplorer({ element, accent, onApply }: GuidedExplorerProps
   const goPrev = () => setStepIndex((i) => Math.max(0, i - 1));
 
   return (
-    <div className="glass-panel flex flex-col gap-3 rounded-2xl p-5">
+    <div className="glass-panel-subtle flex flex-col gap-3 rounded-2xl p-5">
       <div className="flex items-center justify-between gap-2">
-        <span
-          className="text-xs font-semibold uppercase tracking-wider"
-          style={{ color: accent }}
-        >
+        <span className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-muted-2">
           Guided tour
         </span>
         <span className="font-mono text-[0.7rem] text-muted">
@@ -133,8 +131,7 @@ export function GuidedExplorer({ element, accent, onApply }: GuidedExplorerProps
             className="h-1 flex-1 rounded-full transition-colors"
             style={{
               background:
-                i <= stepIndex ? accent : "rgba(255,255,255,0.12)",
-              boxShadow: i === stepIndex ? `0 0 10px -2px ${accent}` : "none",
+                i <= stepIndex ? "var(--blue)" : "rgba(255,255,255,0.12)",
             }}
           />
         ))}
@@ -142,7 +139,7 @@ export function GuidedExplorer({ element, accent, onApply }: GuidedExplorerProps
 
       <div>
         <h4 className="text-base font-semibold text-foreground">{step.title}</h4>
-        <p className="mt-1.5 text-sm leading-relaxed text-muted">
+        <p className="mt-1.5 text-sm leading-relaxed text-secondary">
           {step.body(element)}
         </p>
       </div>
@@ -150,14 +147,8 @@ export function GuidedExplorer({ element, accent, onApply }: GuidedExplorerProps
       <button
         type="button"
         onClick={() => onApply(step.focus)}
-        className="inline-flex items-center justify-center gap-1.5 rounded-lg border px-3 py-2 text-sm font-medium transition-all"
-        style={{
-          borderColor: accent,
-          color: accent,
-          background: `color-mix(in srgb, ${accent} 12%, transparent)`,
-        }}
+        className="inline-flex items-center justify-center gap-1.5 rounded-xl border border-accent/50 bg-accent/15 px-3 py-2 text-sm font-medium text-[#6cb4ff] transition-colors hover:bg-accent/25"
       >
-        <span aria-hidden="true">✦</span>
         {step.applyLabel ?? "Apply step focus"}
       </button>
 
@@ -168,7 +159,7 @@ export function GuidedExplorer({ element, accent, onApply }: GuidedExplorerProps
           disabled={isFirst}
           className="inline-flex items-center gap-1.5 rounded-lg border border-white/12 bg-white/[0.04] px-3 py-1.5 text-sm font-medium text-foreground transition-colors enabled:hover:border-white/25 enabled:hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <span aria-hidden="true">←</span> Previous
+          <ChevronLeft className="h-4 w-4" /> Previous
         </button>
         <button
           type="button"
@@ -176,7 +167,7 @@ export function GuidedExplorer({ element, accent, onApply }: GuidedExplorerProps
           disabled={isLast}
           className="inline-flex items-center gap-1.5 rounded-lg border border-white/12 bg-white/[0.04] px-3 py-1.5 text-sm font-medium text-foreground transition-colors enabled:hover:border-white/25 enabled:hover:bg-white/10 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          Next <span aria-hidden="true">→</span>
+          Next <ChevronRight className="h-4 w-4" />
         </button>
       </div>
     </div>

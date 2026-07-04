@@ -50,9 +50,9 @@ export function Nucleus({
       <mesh>
         <sphereGeometry args={[glowRadius, 24, 24]} />
         <meshBasicMaterial
-          color="#ff7aa0"
+          color="#ff8fa8"
           transparent
-          opacity={(emphasized ? 0.1 : 0.06) * nucleonEmphasis}
+          opacity={(emphasized ? 0.08 : 0.045) * nucleonEmphasis}
           depthWrite={false}
         />
       </mesh>
@@ -61,7 +61,7 @@ export function Nucleus({
         <meshBasicMaterial
           color="#ffd2dc"
           transparent
-          opacity={0.05 * nucleonEmphasis}
+          opacity={0.04 * nucleonEmphasis}
           depthWrite={false}
         />
       </mesh>

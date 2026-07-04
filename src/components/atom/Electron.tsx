@@ -59,13 +59,13 @@ export function Electron({ position, selected, onSelect, emphasis = 1 }: Electro
           metalness={0}
         />
       </mesh>
-      {/* Soft glow halo — a larger translucent sphere reads as a faint trail. */}
-      <mesh scale={(active ? 2.4 : 2) * (emphasis > 1 ? 1.15 : 1)}>
+      {/* Tight glow halo — a slightly larger translucent sphere, kept subtle. */}
+      <mesh scale={(active ? 2 : 1.7) * (emphasis > 1 ? 1.12 : 1)}>
         <sphereGeometry args={[ELECTRON_RADIUS, 12, 12]} />
         <meshBasicMaterial
           color={emissive}
           transparent
-          opacity={Math.min(0.4, (active ? 0.22 : 0.12) * emphasis)}
+          opacity={Math.min(0.32, (active ? 0.18 : 0.1) * emphasis)}
           depthWrite={false}
         />
       </mesh>

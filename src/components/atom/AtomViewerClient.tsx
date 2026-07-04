@@ -16,13 +16,13 @@ const AtomViewer = dynamic(
   {
     ssr: false,
     loading: () => (
-      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_20rem]">
-        <div className="glass-panel flex h-[26rem] items-center justify-center rounded-3xl sm:h-[34rem]">
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1fr)_minmax(20rem,26rem)]">
+        <div className="glass-panel-subtle flex h-[clamp(24rem,60vh,32rem)] items-center justify-center rounded-3xl lg:h-[clamp(560px,70vh,820px)]">
           <span className="animate-pulse text-sm text-muted">
             Loading 3D atom…
           </span>
         </div>
-        <div className="glass-panel hidden rounded-2xl lg:block" />
+        <div className="glass-panel-subtle hidden rounded-2xl lg:block" />
       </div>
     ),
   },

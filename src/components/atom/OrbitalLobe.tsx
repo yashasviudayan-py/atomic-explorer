@@ -55,17 +55,19 @@ export function OrbitalLobe({
     document.body.style.cursor = "auto";
   };
 
-  const baseOpacity = Math.min(0.5, (active ? 0.26 : 0.14) * intensity);
+  // Extremely transparent: the point cloud carries the shape, the lobe mesh
+  // only adds a soft volumetric hint (and a generous click target).
+  const baseOpacity = Math.min(0.22, (active ? 0.13 : 0.055) * intensity);
 
   return (
     <group position={position} rotation={rotation} scale={scale}>
-      {/* Inner brighter core of the lobe. */}
+      {/* Inner soft core of the lobe. */}
       <mesh
         onClick={handleClick}
         onPointerOver={handleOver}
         onPointerOut={handleOut}
       >
-        <sphereGeometry args={[1, 20, 20]} />
+        <sphereGeometry args={[1, 28, 28]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -73,13 +75,13 @@ export function OrbitalLobe({
           depthWrite={false}
         />
       </mesh>
-      {/* Soft outer halo. */}
+      {/* Fainter outer halo. */}
       <mesh scale={1.45}>
-        <sphereGeometry args={[1, 16, 16]} />
+        <sphereGeometry args={[1, 20, 20]} />
         <meshBasicMaterial
           color={glow}
           transparent
-          opacity={baseOpacity * 0.45}
+          opacity={baseOpacity * 0.4}
           depthWrite={false}
         />
       </mesh>

@@ -106,10 +106,10 @@ function OrbitalLayer({
         </bufferGeometry>
         <pointsMaterial
           color={color}
-          size={dominant ? 0.075 : 0.055}
+          size={dominant ? 0.062 : 0.044}
           sizeAttenuation
           transparent
-          opacity={Math.min(0.85, (dominant ? 0.7 : 0.4) * layerIntensity)}
+          opacity={Math.min(0.8, (dominant ? 0.66 : 0.36) * layerIntensity)}
           depthWrite={false}
           blending={AdditiveBlending}
         />
