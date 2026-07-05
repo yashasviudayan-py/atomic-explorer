@@ -21,6 +21,41 @@ export type ElementCategory =
 /** Orbital block the element's valence electrons occupy. */
 export type ElementBlock = "s" | "p" | "d" | "f";
 
+/** Physical state at room temperature (298 K). */
+export type ElementPhase = "solid" | "liquid" | "gas" | "unknown";
+
+/**
+ * Richer physical, chemical, and historical properties for an element.
+ *
+ * Numeric fields are `null` where no reliable measured value exists — chiefly
+ * the short-lived synthetic superheavy elements, whose bulk properties are
+ * unmeasured or only theoretically predicted.
+ */
+export type ElementProperties = {
+  /** State at room temperature (298 K). "unknown" for unmeasured superheavies. */
+  phase: ElementPhase;
+  /** Melting point in kelvin. */
+  meltingPoint: number | null;
+  /** Boiling point in kelvin. */
+  boilingPoint: number | null;
+  /** Density at room temperature in g/cm³ (gases measured at STP). */
+  density: number | null;
+  /** Pauling electronegativity. */
+  electronegativity: number | null;
+  /** Empirical atomic radius in picometres. */
+  atomicRadius: number | null;
+  /** First ionization energy in kJ/mol. */
+  ionizationEnergy: number | null;
+  /** Year of discovery/isolation; `null` for elements known since antiquity. */
+  yearDiscovered: number | null;
+  /** Person or team credited with the discovery. */
+  discoveredBy: string | null;
+  /** Short note on where the element's name comes from. */
+  nameOrigin: string;
+  /** One-line summary of notable real-world uses. */
+  uses: string;
+};
+
 /**
  * A single chemical element.
  *
@@ -50,4 +85,6 @@ export type Element = {
   shells: number[];
   /** Short, one-sentence summary shown in previews and on the detail page. */
   summary: string;
+  /** Richer physical, chemical, and historical properties. */
+  properties: ElementProperties;
 };

@@ -63,5 +63,6 @@ src/
 - [x] Element detail pages with scientific facts
 - [x] 3D atomic visualization (React Three Fiber)
 - [x] Learn and Compare experiences
-- [ ] Deeper per-element content and additional lessons
+- [x] Physical, chemical & historical properties for all 118 elements
+- [ ] Additional lessons and guided content
 - [ ] Automated tests (unit + interaction)

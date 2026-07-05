@@ -12,6 +12,7 @@ import { ShellComparison } from "./ShellComparison";
 import { IsotopeComparison } from "./IsotopeComparison";
 import { ElectronConfigurationComparison } from "./ElectronConfigurationComparison";
 import { CategoryComparison } from "./CategoryComparison";
+import { PropertyComparison } from "./PropertyComparison";
 import { DifferenceHighlights } from "./DifferenceHighlights";
 import { getElementComparison } from "./compareUtils";
 
@@ -196,6 +197,12 @@ export function ElementComparePage({
           rightAccent={rightAccent}
         />
         <CategoryComparison left={left} right={right} />
+        <PropertyComparison
+          left={left}
+          right={right}
+          leftAccent={leftAccent}
+          rightAccent={rightAccent}
+        />
         <IsotopeComparison
           left={left}
           right={right}

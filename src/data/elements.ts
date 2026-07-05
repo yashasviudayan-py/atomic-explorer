@@ -1,4 +1,5 @@
 import type { Element } from "@/types/element";
+import { ELEMENT_PROPERTIES } from "@/data/elementProperties";
 
 /**
  * Complete dataset of all 118 chemical elements.
@@ -9,7 +10,7 @@ import type { Element } from "@/types/element";
  * configurations use accepted ground-state values (predicted for the
  * superheavy elements). Masses without a stable isotope are bracketed.
  */
-export const ELEMENTS: Element[] = [
+const BASE_ELEMENTS: Omit<Element, "properties">[] = [
   { atomicNumber: 1, symbol: "H", name: "Hydrogen", atomicMass: "1.008", category: "reactive-nonmetal", group: 1, period: 1, block: "s", x: 1, y: 1, electronConfiguration: "1s1", shells: [1], summary: "The lightest and most abundant element in the universe." },
   { atomicNumber: 2, symbol: "He", name: "Helium", atomicMass: "4.0026", category: "noble-gas", group: 18, period: 1, block: "s", x: 18, y: 1, electronConfiguration: "1s2", shells: [2], summary: "An inert, ultralight noble gas formed in stellar fusion." },
 
@@ -135,6 +136,15 @@ export const ELEMENTS: Element[] = [
   { atomicNumber: 117, symbol: "Ts", name: "Tennessine", atomicMass: "[294]", category: "unknown", group: 17, period: 7, block: "p", x: 17, y: 7, electronConfiguration: "[Rn] 5f14 6d10 7s2 7p5", shells: [2, 8, 18, 32, 32, 18, 7], summary: "The second-heaviest known element, with halogen-like placement." },
   { atomicNumber: 118, symbol: "Og", name: "Oganesson", atomicMass: "[294]", category: "unknown", group: 18, period: 7, block: "p", x: 18, y: 7, electronConfiguration: "[Rn] 5f14 6d10 7s2 7p6", shells: [2, 8, 18, 32, 32, 18, 8], summary: "The heaviest element yet made, capping the noble-gas column." },
 ];
+
+/**
+ * Complete element list, with each entry's richer physical/chemical/historical
+ * properties merged in by atomic number.
+ */
+export const ELEMENTS: Element[] = BASE_ELEMENTS.map((element) => ({
+  ...element,
+  properties: ELEMENT_PROPERTIES[element.atomicNumber],
+}));
 
 /** Map of uppercase symbol → element, for fast detail-page lookups. */
 export const ELEMENTS_BY_SYMBOL: Record<string, Element> = Object.fromEntries(
