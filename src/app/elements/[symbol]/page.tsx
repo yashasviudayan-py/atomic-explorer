@@ -41,6 +41,7 @@ export default async function ElementDetailPage({
   }
 
   const meta = CATEGORY_META[element.category];
+  const { properties } = element;
 
   return (
     <article className="page-shell relative py-10 lg:py-14">
@@ -161,8 +162,67 @@ export default async function ElementDetailPage({
         </div>
       </section>
 
+      {/* Physical & atomic properties */}
+      <section className="mt-8">
+        <SectionHeading
+          eyebrow="Properties"
+          title="Physical &amp; atomic properties"
+          accent={meta.accent}
+        />
+        <dl className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <Property label="State (room temp)" value={formatPhase(properties.phase)} />
+          <Property label="Melting point" value={formatTemp(properties.meltingPoint)} />
+          <Property label="Boiling point" value={formatTemp(properties.boilingPoint)} />
+          <Property
+            label="Density"
+            value={formatValue(properties.density, "g/cm³")}
+          />
+          <Property
+            label="Electronegativity"
+            value={formatValue(properties.electronegativity, "Pauling")}
+          />
+          <Property
+            label="Atomic radius"
+            value={formatValue(properties.atomicRadius, "pm")}
+          />
+          <Property
+            label="1st ionization energy"
+            value={formatValue(properties.ionizationEnergy, "kJ/mol")}
+          />
+          <Property label="Category" value={meta.label} />
+        </dl>
+      </section>
+
+      {/* Discovery & naming */}
+      <section className="mt-8">
+        <SectionHeading
+          eyebrow="History"
+          title="Discovery &amp; naming"
+          accent={meta.accent}
+        />
+        <dl className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <Property
+            label="Discovered"
+            value={properties.yearDiscovered ? String(properties.yearDiscovered) : "Antiquity"}
+          />
+          <Property
+            label="Discovered by"
+            value={properties.discoveredBy ?? "Unknown"}
+          />
+          <Property label="Origin of name" value={properties.nameOrigin} />
+        </dl>
+        <div className="glass-panel-subtle mt-3 rounded-2xl p-5">
+          <h3 className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-muted-2">
+            Notable uses
+          </h3>
+          <p className="mt-2 text-sm leading-relaxed text-secondary">
+            {properties.uses}
+          </p>
+        </div>
+      </section>
+
       {/* Summary / properties */}
-      <section className="glass-panel-subtle mt-4 rounded-2xl p-5">
+      <section className="glass-panel-subtle mt-8 rounded-2xl p-5">
         <h2 className="text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-muted-2">
           Summary
         </h2>
@@ -189,6 +249,25 @@ export default async function ElementDetailPage({
       </div>
     </article>
   );
+}
+
+/** Kelvin → "273 K (0 °C)"; "—" when unknown. */
+function formatTemp(kelvin: number | null): string {
+  if (kelvin === null) return "—";
+  const celsius = Math.round(kelvin - 273.15);
+  return `${Math.round(kelvin)} K (${celsius} °C)`;
+}
+
+/** Numeric value with a unit suffix; "—" when unknown. */
+function formatValue(value: number | null, unit: string): string {
+  if (value === null) return "—";
+  return `${value} ${unit}`;
+}
+
+/** Capitalize the room-temperature phase; "Unknown" for unmeasured elements. */
+function formatPhase(phase: string): string {
+  if (phase === "unknown") return "Unknown";
+  return phase.charAt(0).toUpperCase() + phase.slice(1);
 }
 
 function SectionHeading({
