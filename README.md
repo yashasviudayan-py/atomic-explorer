@@ -14,6 +14,7 @@ shells, and the science behind them.
 - **TypeScript** (strict)
 - **Tailwind CSS** v4
 - **React Three Fiber / Three.js** for the 3D atom visualization
+- **Vitest** + **React Testing Library** for unit and interaction tests
 - No backend — element, isotope, and lesson data live in local TS modules
 
 ## Getting started
@@ -32,6 +33,9 @@ npm run dev      # http://localhost:3000
 | `npm run start`     | Serve the production build           |
 | `npm run typecheck` | Type-check with `tsc --noEmit`       |
 | `npm run lint`      | Lint with ESLint (flat config)       |
+| `npm run test`      | Run the test suite once (Vitest)     |
+| `npm run test:watch`| Run tests in watch mode              |
+| `npm run test:coverage` | Run tests with a coverage report |
 
 ## Project structure
 
@@ -56,6 +60,26 @@ src/
   types/               # Domain types (Element, Isotope, Lesson)
 ```
 
+Tests live next to the code they cover as `*.test.ts(x)` files.
+
+## Testing
+
+[Vitest](https://vitest.dev) drives both unit and interaction tests, with
+[React Testing Library](https://testing-library.com/react) for components. Run
+them with `npm run test` (single pass) or `npm run test:watch`.
+
+Coverage focuses on the app's pure logic and interactive surfaces:
+
+- **Data integrity** — every one of the 118 elements has contiguous atomic
+  numbers, unique symbols, shell counts that sum to the atomic number, a
+  parseable mass, and valid grid coordinates; lessons have well-formed
+  checkpoints and reference only real elements.
+- **Pure logic** — search/category filtering, lesson-progress persistence
+  (including SSR and corrupt-storage safety), the atom-model geometry and
+  isotope helpers, and the element-comparison math.
+- **Interaction** — search input, category filter chips, and the lesson
+  checkpoint flow, exercised through simulated user events.
+
 ## Roadmap
 
 - [x] App shell, navigation, and landing page
@@ -64,5 +88,5 @@ src/
 - [x] 3D atomic visualization (React Three Fiber)
 - [x] Learn and Compare experiences
 - [x] Physical, chemical & historical properties for all 118 elements
+- [x] Automated tests (unit + interaction)
 - [ ] Additional lessons and guided content
-- [ ] Automated tests (unit + interaction)
