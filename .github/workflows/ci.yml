@@ -8,6 +8,10 @@ on:
 
 jobs:
   build:
+    # Keep this name aligned with the required status check in the
+    # branch-protection rule for `main` ("Type-check & build"). Renaming the job
+    # orphans that check and blocks every PR, so grow the pipeline by adding
+    # steps below — not by renaming the job.
     name: Type-check & build
     runs-on: ubuntu-latest
 
@@ -24,8 +28,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Lint
+        run: npm run lint
+
       - name: Type-check
         run: npm run typecheck
+
+      - name: Test
+        run: npm run test
 
       - name: Build
         run: npm run build
