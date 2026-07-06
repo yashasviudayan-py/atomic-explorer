@@ -47,6 +47,297 @@
   --ease-spring: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
+/* ---------------------------------------------------------------------------
+ * Homepage motion layer — entrance reveals, glow, and gradient type.
+ *
+ * The ambient element field and the living atom are drawn on <canvas> (see the
+ * home/ components); everything below is the DOM-side polish that surrounds
+ * them. All of it is disabled under prefers-reduced-motion (rule at the bottom
+ * of this file), which stills the canvases too.
+ * ------------------------------------------------------------------------- */
+
+/* Staggered entrance: elements begin hidden and rise into place. Set the delay
+   per element with `style={{ animationDelay }}`. Applied only once on load. */
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reveal {
+  opacity: 0;
+  animation: rise 0.9s var(--ease-spring) both;
+}
+
+/* Scroll-triggered reveal: hidden until an IntersectionObserver adds
+   `is-visible` as the element enters the viewport. Stagger with an inline
+   `transition-delay`. */
+.reveal-scroll {
+  opacity: 0;
+  transform: translateY(26px);
+  transition:
+    opacity 0.8s var(--ease-spring),
+    transform 0.8s var(--ease-spring);
+}
+.reveal-scroll.is-visible {
+  opacity: 1;
+  transform: none;
+}
+
+/* Soft, slow-breathing halo behind the primary CTA. */
+@keyframes halo-pulse {
+  0%,
+  100% {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.9;
+    transform: scale(1.06);
+  }
+}
+
+/* Slow drift of a gradient across key headline words — a restrained shimmer,
+   not a rainbow sweep. */
+@keyframes shimmer {
+  to {
+    background-position: 200% center;
+  }
+}
+
+/*
+ * Grand hero headline. SF Pro Display, tight leading, confident weight. Two key
+ * words carry a blue→cyan→violet gradient that drifts slowly.
+ */
+.hero-headline {
+  /* One weight for the whole line. The white segment is toned a hair below
+     pure white so it doesn't optically bloom heavier than the gradient words —
+     the two now read as a single, consistent weight. */
+  font-weight: 600;
+  color: #e9e9f0;
+  letter-spacing: -0.035em;
+  line-height: 1.04;
+  text-wrap: balance;
+}
+
+.hero-accent {
+  /* Same 600 weight as the surrounding text; `-webkit-text-fill-color`
+     renders the clipped gradient at full glyph weight (crisper than relying on
+     `color: transparent` alone), so it matches the white words. */
+  font-weight: 600;
+  background: linear-gradient(
+    100deg,
+    var(--color-accent) 0%,
+    var(--color-accent-cyan) 30%,
+    #a9c9ff 50%,
+    var(--color-accent-cyan) 70%,
+    var(--color-accent-violet) 100%
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 8s linear infinite;
+}
+
+/* Premium eyebrow: wide tracking, a small leading pip, a faint blue glow. */
+.hero-eyebrow {
+  color: var(--color-accent-cyan);
+  letter-spacing: 0.28em;
+  text-shadow: 0 0 18px rgba(100, 210, 255, 0.35);
+}
+
+/*
+ * Primary CTA — glowing, tactile. A pulsing halo sits behind it (::before), an
+ * inner top-edge highlight sells the raised surface, and the whole control
+ * lifts and intensifies on hover. The halo lives on a pseudo-element so it can
+ * scale independently of the button's own hover transform.
+ */
+.cta-primary {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(180deg, #2b95ff, var(--color-accent));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    0 8px 26px -8px rgba(10, 132, 255, 0.75);
+  transition:
+    transform 0.35s var(--ease-spring),
+    box-shadow 0.35s var(--ease-spring);
+}
+
+.cta-primary::before {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    60% 60% at 50% 50%,
+    rgba(10, 132, 255, 0.85),
+    rgba(100, 210, 255, 0.25) 70%,
+    transparent
+  );
+  filter: blur(12px);
+  animation: halo-pulse 3.4s ease-in-out infinite;
+}
+
+.cta-primary:hover {
+  transform: translateY(-2px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    0 14px 40px -8px rgba(10, 132, 255, 0.95);
+}
+
+.cta-secondary {
+  transition:
+    transform 0.35s var(--ease-spring),
+    border-color 0.35s var(--ease-spring),
+    background-color 0.35s var(--ease-spring);
+}
+.cta-secondary:hover {
+  transform: translateY(-2px);
+}
+
+/*
+ * Refined frosted-glass feature card. A gradient hairline border (via a masked
+ * ::before), an inner glow that blooms from the top on hover (::after), and a
+ * gentle lift. The icon tile pulses on hover through its own class below.
+ */
+.feature-card {
+  position: relative;
+  isolation: isolate;
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.09),
+    rgba(255, 255, 255, 0.03)
+  );
+  border: 1px solid transparent;
+  border-radius: 1rem;
+  backdrop-filter: blur(22px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 12px 40px -24px rgba(0, 0, 0, 0.9);
+  transition:
+    transform 0.45s var(--ease-spring),
+    box-shadow 0.45s var(--ease-spring);
+}
+
+/* Gradient hairline: paint a border-box gradient and knock out the fill so only
+   the 1px frame shows. Brightens toward blue on hover. */
+.feature-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(
+    150deg,
+    rgba(255, 255, 255, 0.38),
+    rgba(255, 255, 255, 0.08) 42%,
+    rgba(10, 132, 255, 0.1) 72%
+  );
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  transition: background 0.45s var(--ease-spring);
+}
+
+/* Inner top-down glow. Faintly present at rest so the card always feels lit,
+   blooming on hover. */
+.feature-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: radial-gradient(
+    120% 80% at 50% -10%,
+    rgba(10, 132, 255, 0.24),
+    transparent 62%
+  );
+  opacity: 0.28;
+  transition: opacity 0.45s var(--ease-spring);
+}
+
+.feature-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.12),
+    0 28px 64px -24px rgba(0, 0, 0, 0.92),
+    0 12px 46px -16px rgba(10, 132, 255, 0.55);
+}
+.feature-card:hover::before {
+  background: linear-gradient(
+    150deg,
+    rgba(100, 210, 255, 0.5),
+    rgba(10, 132, 255, 0.28) 45%,
+    rgba(191, 90, 242, 0.12) 80%
+  );
+}
+.feature-card:hover::after {
+  opacity: 1;
+}
+
+/* Icon tile inside a feature card: gains a blue bloom and a slow pulse on
+   hover, so the glyph feels energized rather than static. */
+.feature-icon {
+  transition:
+    transform 0.45s var(--ease-spring),
+    border-color 0.45s var(--ease-spring),
+    box-shadow 0.45s var(--ease-spring),
+    color 0.45s var(--ease-spring);
+}
+@keyframes icon-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(10, 132, 255, 0);
+  }
+  50% {
+    box-shadow: 0 0 22px 2px rgba(10, 132, 255, 0.55);
+  }
+}
+.feature-card:hover .feature-icon {
+  transform: translateY(-2px) scale(1.06);
+  border-color: rgba(100, 210, 255, 0.6);
+  color: var(--color-accent-cyan);
+  animation: icon-pulse 2.4s ease-in-out infinite;
+}
+
+/* Animated underline for nav links — grows from the left on hover / active. */
+.nav-underline {
+  position: relative;
+}
+.nav-underline::after {
+  content: "";
+  position: absolute;
+  left: 0.875rem;
+  right: 0.875rem;
+  bottom: 0.35rem;
+  height: 1.5px;
+  border-radius: 1px;
+  background: linear-gradient(
+    90deg,
+    var(--color-accent),
+    var(--color-accent-cyan)
+  );
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease-spring);
+}
+.nav-underline:hover::after,
+.nav-underline[data-active="true"]::after {
+  transform: scaleX(1);
+}
+
 /* Plain aliases for inline styles and non-Tailwind consumers. */
 :root {
   --background: #000000;
@@ -246,5 +537,13 @@ h4 {
   }
   html {
     scroll-behavior: auto;
+  }
+  /* Entrance reveals rely on an animation/transition to fade in from
+     opacity:0; with those disabled they must be shown immediately instead of
+     staying invisible. */
+  .reveal,
+  .reveal-scroll {
+    opacity: 1;
+    transform: none;
   }
 }
