@@ -40,7 +40,8 @@ export function Header() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className={`rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors hover:text-white ${
+                  data-active={active ? "true" : undefined}
+                  className={`nav-underline rounded-lg px-3.5 py-1.5 text-sm font-medium transition-colors hover:text-white ${
                     active ? "text-white" : "text-muted"
                   }`}
                 >
