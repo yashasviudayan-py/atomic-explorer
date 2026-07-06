@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { OrbitControls, Stars } from "@react-three/drei";
-import { useFrame } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 import { Group } from "three";
 import type { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import type { Element } from "@/types/element";
@@ -39,6 +39,8 @@ interface AtomSceneProps {
   visualMode: AtomVisualMode;
   /** Incrementing counter; each change triggers an OrbitControls reset. */
   resetSignal: number;
+  /** Fitted camera position for the current element/model (see AtomViewer). */
+  cameraPosition: [number, number, number];
 }
 
 /** Per-mode emphasis values keeping the scene balanced and OLED-elegant. */
@@ -115,8 +117,10 @@ export function AtomScene({
   atomicModelMode,
   visualMode,
   resetSignal,
+  cameraPosition,
 }: AtomSceneProps) {
   const controlsRef = useRef<OrbitControlsImpl>(null);
+  const camera = useThree((state) => state.camera);
 
   // Reset camera/orbit when the reset signal changes (but not on first mount).
   const firstRun = useRef(true);
@@ -127,6 +131,32 @@ export function AtomScene({
     }
     controlsRef.current?.reset();
   }, [resetSignal]);
+
+  // Reframe when the fitted camera position changes. The <Canvas camera> prop
+  // only positions the camera on mount, so switching model (Bohr <-> Quantum,
+  // whose clouds have a different extent) would otherwise keep the old framing
+  // and render the atom clipped or undersized until a reload. Move the live
+  // camera to the fitted, centred view and re-save it as the OrbitControls home
+  // state, so a later "Reset view" returns here rather than the stale mount-time
+  // framing. Skips the first run — mount already frames from the Canvas prop.
+  const firstFrame = useRef(true);
+  useEffect(() => {
+    if (firstFrame.current) {
+      firstFrame.current = false;
+      return;
+    }
+    const controls = controlsRef.current;
+    camera.position.set(cameraPosition[0], cameraPosition[1], cameraPosition[2]);
+    if (controls) {
+      controls.target.set(0, 0, 0);
+      camera.lookAt(controls.target);
+      controls.update();
+      controls.saveState();
+    } else {
+      camera.lookAt(0, 0, 0);
+    }
+    camera.updateProjectionMatrix();
+  }, [camera, cameraPosition]);
 
   const isQuantum = atomicModelMode === "quantum";
   const emphasis = useMemo(() => emphasisFor(visualMode), [visualMode]);

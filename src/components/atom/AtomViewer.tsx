@@ -157,6 +157,7 @@ export function AtomViewer({ element }: AtomViewerProps) {
                 atomicModelMode={modelMode}
                 visualMode={visualMode}
                 resetSignal={resetSignal}
+                cameraPosition={cameraPosition}
               />
             </Canvas>
 
