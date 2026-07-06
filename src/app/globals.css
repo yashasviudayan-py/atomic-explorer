@@ -173,6 +173,22 @@ h4 {
   backdrop-filter: blur(16px);
 }
 
+/*
+ * Touch behaviour for the 3D atom canvases.
+ *
+ * OrbitControls forces `touch-action: none` on its canvas (inline, no
+ * !important), which makes a one-finger drag rotate the atom and trap page
+ * scrolling on touch devices — the canvas fills most of a phone screen, so the
+ * page becomes hard to scroll past. Overriding to `pan-y` hands single-finger
+ * vertical swipes back to the browser (page scroll) while horizontal drags
+ * still rotate and two-finger pinch still zooms. `!important` is required to
+ * beat OrbitControls' inline style. `.atom-canvas` sits on the R3F <Canvas>
+ * wrapper; the rule targets the inner <canvas> OrbitControls binds to.
+ */
+.atom-canvas canvas {
+  touch-action: pan-y !important;
+}
+
 /**
  * Chrome elevation: how cards/rows lift on hover. Apple elevates with a soft
  * neutral shadow (never a colored glow) and eases in on a decelerating spring.
