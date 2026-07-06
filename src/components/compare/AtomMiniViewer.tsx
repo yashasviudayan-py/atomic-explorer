@@ -279,6 +279,7 @@ export function AtomMiniViewer({
       />
       {mounted ? (
         <Canvas
+          className="atom-canvas"
           dpr={[1, 1.5]}
           camera={{ position: cameraPosition, fov: MINI_FOV }}
           gl={{ antialias: true, powerPreference: "low-power" }}

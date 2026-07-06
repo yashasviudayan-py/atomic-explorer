@@ -138,6 +138,7 @@ export function AtomViewer({ element }: AtomViewerProps) {
               }}
             />
             <Canvas
+              className="atom-canvas"
               dpr={[1, 1.75]}
               camera={{ position: cameraPosition, fov: 36 }}
               gl={{ antialias: true }}
