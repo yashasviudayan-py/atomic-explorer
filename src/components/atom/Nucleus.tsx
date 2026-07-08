@@ -20,6 +20,8 @@ interface NucleusProps {
   nucleonEmphasis?: number;
   /** Slightly enlarge the nucleus in particle-focus mode. */
   emphasized?: boolean;
+  /** Sphere tessellation for each nucleon (lower on mobile). */
+  segments?: number;
 }
 
 /**
@@ -36,6 +38,7 @@ export function Nucleus({
   onSelect,
   nucleonEmphasis = 1,
   emphasized = false,
+  segments = 14,
 }: NucleusProps) {
   const particles = useMemo(
     () => getNucleusParticles(protons, neutrons),
@@ -74,6 +77,7 @@ export function Nucleus({
             selected={selected === "proton"}
             onSelect={() => onSelect("proton")}
             emphasis={nucleonEmphasis}
+            segments={segments}
           />
         ) : (
           <Neutron
@@ -82,6 +86,7 @@ export function Nucleus({
             selected={selected === "neutron"}
             onSelect={() => onSelect("neutron")}
             emphasis={nucleonEmphasis}
+            segments={segments}
           />
         ),
       )}

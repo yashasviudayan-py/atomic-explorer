@@ -12,6 +12,7 @@ import { OrbitalInfoPanel } from "./OrbitalInfoPanel";
 import { GuidedExplorer, type StepFocus } from "./GuidedExplorer";
 import { ModelNotice } from "./ModelNotice";
 import { IsotopeSelector } from "./IsotopeSelector";
+import { useRenderQuality } from "./useRenderQuality";
 import type {
   AtomicModelMode,
   AtomVisualMode,
@@ -62,13 +63,18 @@ export function AtomViewer({ element }: AtomViewerProps) {
   const accent = CATEGORY_META[element.category].accent;
   const isQuantum = modelMode === "quantum";
 
+  // Render-quality preset from viewport width (mobile → low, desktop → high).
+  // Tunes only the visuals; the data panels always report true counts.
+  const quality = useRenderQuality();
+
   // Composition comes from the selected isotope (neutral atom: e⁻ == p⁺).
   const { protons, neutrons } = selectedIsotope;
 
-  // Cap the rendered nucleon count for heavy atoms (true counts stay in panel).
+  // Cap the rendered nucleon count for heavy atoms (true counts stay in panel);
+  // the cap is tighter on mobile for a lighter scene.
   const display = useMemo(
-    () => getNucleusDisplayCounts(protons, neutrons),
-    [protons, neutrons],
+    () => getNucleusDisplayCounts(protons, neutrons, quality.nucleusCap),
+    [protons, neutrons, quality.nucleusCap],
   );
 
   // Frame the camera so the atom fills a consistent ~85% of the 36° vertical
@@ -139,9 +145,9 @@ export function AtomViewer({ element }: AtomViewerProps) {
             />
             <Canvas
               className="atom-canvas"
-              dpr={[1, 1.75]}
+              dpr={[1, quality.dprMax]}
               camera={{ position: cameraPosition, fov: 36 }}
-              gl={{ antialias: true }}
+              gl={{ antialias: quality.quality !== "low" }}
               onPointerMissed={() => setSelected(null)}
               style={{ background: "transparent" }}
             >
@@ -158,6 +164,7 @@ export function AtomViewer({ element }: AtomViewerProps) {
                 visualMode={visualMode}
                 resetSignal={resetSignal}
                 cameraPosition={cameraPosition}
+                quality={quality}
               />
             </Canvas>
 

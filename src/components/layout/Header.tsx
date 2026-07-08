@@ -19,7 +19,7 @@ export function Header() {
   const pathname = usePathname();
 
   return (
-    <header className="sticky top-0 z-50 border-b border-white/10 bg-black/70 backdrop-blur-xl">
+    <header className="sticky top-0 z-50 border-b border-white/10 bg-black md:bg-black/70 md:backdrop-blur-xl">
       <nav className="page-shell flex h-14 items-center justify-between">
         <Link
           href="/"
@@ -74,7 +74,7 @@ export function Header() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="border-t border-white/10 bg-black/90 px-4 py-3 backdrop-blur-xl md:hidden">
+        <div className="border-t border-white/10 bg-black px-4 py-3 md:hidden">
           <ul className="flex flex-col gap-1">
             {NAV_LINKS.map((link) => (
               <li key={link.href}>

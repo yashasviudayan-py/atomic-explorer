@@ -11,13 +11,15 @@ interface ProtonProps {
   onSelect: () => void;
   /** Emissive multiplier for visual-mode emphasis (1 = neutral). */
   emphasis?: number;
+  /** Sphere tessellation (lower on mobile for a lighter scene). */
+  segments?: number;
 }
 
 /**
  * A single proton: a small warm-rose glowing sphere clustered in the nucleus.
  * Clicking it selects the "proton" info panel; hovering shows a pointer cursor.
  */
-export function Proton({ position, selected, onSelect, emphasis = 1 }: ProtonProps) {
+export function Proton({ position, selected, onSelect, emphasis = 1, segments = 14 }: ProtonProps) {
   const [hovered, setHovered] = useState(false);
   const { color, emissive } = PARTICLE_COLORS.proton;
 
@@ -45,7 +47,7 @@ export function Proton({ position, selected, onSelect, emphasis = 1 }: ProtonPro
       onPointerOut={handleOut}
       scale={hovered || selected ? 1.18 : 1}
     >
-      <sphereGeometry args={[NUCLEON_RADIUS, 14, 14]} />
+      <sphereGeometry args={[NUCLEON_RADIUS, segments, segments]} />
       <meshStandardMaterial
         color={color}
         emissive={emissive}

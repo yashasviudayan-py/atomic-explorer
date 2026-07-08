@@ -11,13 +11,15 @@ interface NeutronProps {
   onSelect: () => void;
   /** Emissive multiplier for visual-mode emphasis (1 = neutral). */
   emphasis?: number;
+  /** Sphere tessellation (lower on mobile for a lighter scene). */
+  segments?: number;
 }
 
 /**
  * A single neutron: a cool cyan-blue glowing sphere clustered in the nucleus.
  * Clicking it selects the "neutron" info panel; hovering shows a pointer cursor.
  */
-export function Neutron({ position, selected, onSelect, emphasis = 1 }: NeutronProps) {
+export function Neutron({ position, selected, onSelect, emphasis = 1, segments = 14 }: NeutronProps) {
   const [hovered, setHovered] = useState(false);
   const { color, emissive } = PARTICLE_COLORS.neutron;
 
@@ -45,7 +47,7 @@ export function Neutron({ position, selected, onSelect, emphasis = 1 }: NeutronP
       onPointerOut={handleOut}
       scale={hovered || selected ? 1.18 : 1}
     >
-      <sphereGeometry args={[NUCLEON_RADIUS, 14, 14]} />
+      <sphereGeometry args={[NUCLEON_RADIUS, segments, segments]} />
       <meshStandardMaterial
         color={color}
         emissive={emissive}

@@ -11,6 +11,8 @@ interface ElectronProps {
   onSelect: () => void;
   /** Emissive/glow multiplier for visual-mode emphasis (1 = neutral). */
   emphasis?: number;
+  /** Sphere tessellation (lower on mobile for a lighter scene). */
+  segments?: number;
 }
 
 /**
@@ -19,7 +21,7 @@ interface ElectronProps {
  * {@link ElectronShell}) for performance — this component only owns appearance
  * and interaction, so there is no per-electron `useFrame`.
  */
-export function Electron({ position, selected, onSelect, emphasis = 1 }: ElectronProps) {
+export function Electron({ position, selected, onSelect, emphasis = 1, segments = 16 }: ElectronProps) {
   const [hovered, setHovered] = useState(false);
   const { color, emissive } = PARTICLE_COLORS.electron;
 
@@ -50,7 +52,7 @@ export function Electron({ position, selected, onSelect, emphasis = 1 }: Electro
         onPointerOut={handleOut}
         scale={active ? 1.3 : 1}
       >
-        <sphereGeometry args={[ELECTRON_RADIUS, 16, 16]} />
+        <sphereGeometry args={[ELECTRON_RADIUS, segments, segments]} />
         <meshStandardMaterial
           color={color}
           emissive={emissive}
@@ -61,7 +63,7 @@ export function Electron({ position, selected, onSelect, emphasis = 1 }: Electro
       </mesh>
       {/* Tight glow halo — a slightly larger translucent sphere, kept subtle. */}
       <mesh scale={(active ? 2 : 1.7) * (emphasis > 1 ? 1.12 : 1)}>
-        <sphereGeometry args={[ELECTRON_RADIUS, 12, 12]} />
+        <sphereGeometry args={[ELECTRON_RADIUS, Math.max(8, segments - 4), Math.max(8, segments - 4)]} />
         <meshBasicMaterial
           color={emissive}
           transparent

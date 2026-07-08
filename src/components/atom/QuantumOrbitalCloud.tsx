@@ -11,6 +11,7 @@ import type {
   SelectedParticle,
 } from "./atomTypes";
 import { OrbitalLobe } from "./OrbitalLobe";
+import type { QualityPreset } from "./useRenderQuality";
 import {
   ORBITAL_COLORS,
   generateOrbitalPoints,
@@ -27,6 +28,8 @@ interface QuantumOrbitalCloudProps {
   animationSpeed: number;
   /** Active visual emphasis mode. */
   visualMode: AtomVisualMode;
+  /** Render-quality preset (drives point density and mesh detail). */
+  quality: QualityPreset;
 }
 
 /** How brightly the cloud reads under each visual mode. */
@@ -60,6 +63,8 @@ interface OrbitalLayerProps {
   animationSpeed: number;
   selected: SelectedParticle;
   onSelect: (type: ParticleType) => void;
+  /** Render-quality preset (drives point density and mesh detail). */
+  quality: QualityPreset;
 }
 
 /**
@@ -76,11 +81,16 @@ function OrbitalLayer({
   animationSpeed,
   selected,
   onSelect,
+  quality,
 }: OrbitalLayerProps) {
   const groupRef = useRef<Group>(null);
 
-  // Deterministic geometry — generated once, never per frame.
-  const positions = useMemo(() => generateOrbitalPoints(type), [type]);
+  // Deterministic geometry — generated once per (type, density), never per
+  // frame. Density is thinned on mobile via the render-quality preset.
+  const positions = useMemo(
+    () => generateOrbitalPoints(type, quality.cloudDensity),
+    [type, quality.cloudDensity],
+  );
   const lobes = useMemo(() => getOrbitalLobes(type), [type]);
   const radius = getOrbitalLayerRadius(type);
   const { color, glow } = ORBITAL_COLORS[type];
@@ -125,6 +135,7 @@ function OrbitalLayer({
           intensity={layerIntensity}
           selected={isSelected}
           onClick={handleSelect}
+          segments={quality.sphereSegments}
         />
       ) : (
         lobes.map((lobe, i) => (
@@ -137,12 +148,14 @@ function OrbitalLayer({
             intensity={layerIntensity}
             selected={isSelected}
             onClick={handleSelect}
+            segments={quality.sphereSegments}
           />
         ))
       )}
 
-      {/* Faint outer boundary, hinting the region without a hard edge. */}
-      {dominant && (
+      {/* Faint outer boundary, hinting the region without a hard edge. Dropped
+          on low quality (mobile) where large translucent meshes cost the most. */}
+      {dominant && quality.quality !== "low" && (
         <mesh raycast={() => null}>
           <sphereGeometry args={[radius * 1.12, 24, 24]} />
           <meshBasicMaterial
@@ -171,6 +184,7 @@ export function QuantumOrbitalCloud({
   setSelectedParticleType,
   animationSpeed,
   visualMode,
+  quality,
 }: QuantumOrbitalCloudProps) {
   const types = useMemo(
     () => getOrbitalTypesForBlock(element.block),
@@ -191,6 +205,7 @@ export function QuantumOrbitalCloud({
           animationSpeed={animationSpeed}
           selected={selected}
           onSelect={setSelectedParticleType}
+          quality={quality}
         />
       ))}
     </group>

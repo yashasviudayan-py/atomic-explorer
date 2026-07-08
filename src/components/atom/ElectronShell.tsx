@@ -27,6 +27,8 @@ interface ElectronShellProps {
   electronEmphasis?: number;
   /** Whether the orbit ring should read brighter (shell-focus mode). */
   ringEmphasis?: boolean;
+  /** Sphere tessellation for electrons (lower on mobile). */
+  segments?: number;
 }
 
 /**
@@ -43,6 +45,7 @@ export function ElectronShell({
   animationSpeed,
   electronEmphasis = 1,
   ringEmphasis = false,
+  segments = 16,
 }: ElectronShellProps) {
   const spinRef = useRef<Group>(null);
   const [hovered, setHovered] = useState(false);
@@ -93,7 +96,7 @@ export function ElectronShell({
           document.body.style.cursor = "auto";
         }}
       >
-        <torusGeometry args={[radius, 0.011, 6, 160]} />
+        <torusGeometry args={[radius, 0.011, 6, segments >= 14 ? 128 : 80]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -119,6 +122,7 @@ export function ElectronShell({
             selected={selected === "electron"}
             onSelect={() => onSelect("electron")}
             emphasis={electronEmphasis}
+            segments={segments}
           />
         ))}
       </group>
