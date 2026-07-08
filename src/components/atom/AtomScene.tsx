@@ -10,6 +10,7 @@ import { Nucleus } from "./Nucleus";
 import { ElectronShell } from "./ElectronShell";
 import { AtomLabels } from "./AtomLabels";
 import { QuantumOrbitalCloud } from "./QuantumOrbitalCloud";
+import type { QualityPreset } from "./useRenderQuality";
 import {
   AtomicModelMode,
   AtomVisualMode,
@@ -41,6 +42,8 @@ interface AtomSceneProps {
   resetSignal: number;
   /** Fitted camera position for the current element/model (see AtomViewer). */
   cameraPosition: [number, number, number];
+  /** Render-quality preset (star count, cloud density, tessellation, …). */
+  quality: QualityPreset;
 }
 
 /** Per-mode emphasis values keeping the scene balanced and OLED-elegant. */
@@ -74,13 +77,22 @@ function emphasisFor(mode: AtomVisualMode) {
 
 /**
  * A starfield that drifts very slowly, giving the scene gentle parallax without
- * distracting from the atom. Rotation is paused along with the rest of the
- * animation when {@link AtomScene} reports speed 0.
+ * distracting from the atom. Star count and whether it rotates come from the
+ * render-quality preset — on low quality (mobile) it is omitted entirely by the
+ * caller, and rotation is disabled so nothing spins in the background.
  */
-function DriftingStars({ speed }: { speed: number }) {
+function DriftingStars({
+  speed,
+  count,
+  autoRotate,
+}: {
+  speed: number;
+  count: number;
+  autoRotate: boolean;
+}) {
   const groupRef = useRef<Group>(null);
   useFrame((_, delta) => {
-    if (!groupRef.current) return;
+    if (!groupRef.current || !autoRotate) return;
     groupRef.current.rotation.y += delta * 0.01 * speed;
   });
   return (
@@ -88,11 +100,11 @@ function DriftingStars({ speed }: { speed: number }) {
       <Stars
         radius={100}
         depth={50}
-        count={1600}
+        count={count}
         factor={2.5}
         saturation={0}
         fade
-        speed={0.2}
+        speed={autoRotate ? 0.2 : 0}
       />
     </group>
   );
@@ -118,6 +130,7 @@ export function AtomScene({
   visualMode,
   resetSignal,
   cameraPosition,
+  quality,
 }: AtomSceneProps) {
   const controlsRef = useRef<OrbitControlsImpl>(null);
   const camera = useThree((state) => state.camera);
@@ -186,7 +199,13 @@ export function AtomScene({
       {/* Cool rim light to separate the atom from the black backdrop. */}
       <directionalLight position={[-6, 8, -10]} intensity={0.55} color="#9ec5ff" />
 
-      <DriftingStars speed={animationSpeed} />
+      {quality.starCount > 0 && (
+        <DriftingStars
+          speed={animationSpeed}
+          count={quality.starCount}
+          autoRotate={quality.autoRotate}
+        />
+      )}
 
       {/* The nucleus is shared by both models. */}
       <Nucleus
@@ -196,6 +215,7 @@ export function AtomScene({
         onSelect={setSelectedParticleType}
         nucleonEmphasis={emphasis.nucleonEmphasis}
         emphasized={emphasis.nucleusEmphasized}
+        segments={quality.sphereSegments}
       />
 
       {isQuantum ? (
@@ -205,6 +225,7 @@ export function AtomScene({
           setSelectedParticleType={setSelectedParticleType}
           animationSpeed={animationSpeed}
           visualMode={visualMode}
+          quality={quality}
         />
       ) : (
         shells.map((count, index) => (
@@ -217,6 +238,7 @@ export function AtomScene({
             animationSpeed={animationSpeed}
             electronEmphasis={emphasis.electronEmphasis}
             ringEmphasis={emphasis.ringEmphasis}
+            segments={quality.sphereSegments}
           />
         ))
       )}

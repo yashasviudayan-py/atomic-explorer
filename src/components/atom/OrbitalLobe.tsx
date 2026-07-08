@@ -18,6 +18,8 @@ interface OrbitalLobeProps {
   /** Highlight the lobe when the orbital region is selected. */
   selected?: boolean;
   onClick?: () => void;
+  /** Sphere tessellation (lower on mobile). */
+  segments?: number;
 }
 
 /**
@@ -34,6 +36,7 @@ export function OrbitalLobe({
   intensity = 1,
   selected = false,
   onClick,
+  segments = 28,
 }: OrbitalLobeProps) {
   const [hovered, setHovered] = useState(false);
   const { color, glow } = ORBITAL_COLORS[orbitalType];
@@ -67,7 +70,7 @@ export function OrbitalLobe({
         onPointerOver={handleOver}
         onPointerOut={handleOut}
       >
-        <sphereGeometry args={[1, 28, 28]} />
+        <sphereGeometry args={[1, segments, segments]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -77,7 +80,7 @@ export function OrbitalLobe({
       </mesh>
       {/* Fainter outer halo. */}
       <mesh scale={1.45}>
-        <sphereGeometry args={[1, 20, 20]} />
+        <sphereGeometry args={[1, Math.max(12, segments - 8), Math.max(12, segments - 8)]} />
         <meshBasicMaterial
           color={glow}
           transparent

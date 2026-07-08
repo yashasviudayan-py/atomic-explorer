@@ -181,12 +181,13 @@ export function getParticleCountsFromIsotope(isotope: Isotope): {
 export function getNucleusDisplayCounts(
   protons: number,
   neutrons: number,
+  cap: number = MAX_NUCLEUS_PARTICLES,
 ): NucleusDisplayCounts {
   const total = protons + neutrons;
-  if (total <= MAX_NUCLEUS_PARTICLES) {
+  if (total <= cap) {
     return { protons, neutrons, capped: false };
   }
-  const scale = MAX_NUCLEUS_PARTICLES / total;
+  const scale = cap / total;
   const displayProtons = protons > 0 ? Math.max(1, Math.round(protons * scale)) : 0;
   const displayNeutrons = neutrons > 0 ? Math.max(1, Math.round(neutrons * scale)) : 0;
   return { protons: displayProtons, neutrons: displayNeutrons, capped: true };
@@ -333,14 +334,15 @@ const ORBITAL_LAYER_RADIUS: Record<OrbitalType, number> = {
   f: 6.3,
 };
 
-/** Points sampled into each orbital family's cloud (fixed → heavy-atom safe).
- * Dense enough to read as a continuous probability field, and each cloud is a
- * single draw call so the cost stays flat regardless of atomic number. */
+/** Points sampled into each orbital family's cloud at full (desktop) density.
+ * Tuned so a whole atom stays within ~2000–3500 points on desktop (e.g. a
+ * d-block atom draws s+p+d ≈ 2550); the per-call `densityScale` thins this for
+ * mobile. Each cloud is a single draw call, so cost is flat in atomic number. */
 const ORBITAL_POINT_COUNT: Record<OrbitalType, number> = {
-  s: 1500,
-  p: 1900,
-  d: 2300,
-  f: 2700,
+  s: 700,
+  p: 850,
+  d: 1000,
+  f: 900,
 };
 
 /** Radius of the cloud layer for an orbital family. */
@@ -473,8 +475,14 @@ const ORBITAL_SEED: Record<OrbitalType, number> = {
  * gaussian blobs along their lobe axes. The returned positions are stable for
  * identical inputs — generate once with `useMemo`, never per frame.
  */
-export function generateOrbitalPoints(type: OrbitalType): Float32Array {
-  const count = ORBITAL_POINT_COUNT[type];
+export function generateOrbitalPoints(
+  type: OrbitalType,
+  densityScale: number = 1,
+): Float32Array {
+  const count = Math.max(
+    120,
+    Math.round(ORBITAL_POINT_COUNT[type] * densityScale),
+  );
   const radius = getOrbitalLayerRadius(type);
   const rng = mulberry32(ORBITAL_SEED[type]);
   const positions = new Float32Array(count * 3);

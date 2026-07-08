@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { LivingAtom } from "@/components/home/LivingAtom";
+import { AtomPreview } from "@/components/home/AtomPreview";
 import { ChevronRight } from "@/components/ui/Icon";
 
 /**
- * Landing hero: headline, supporting copy, primary/secondary CTAs, and the
- * animated living atom alongside. Two-column on large screens, stacked on
- * mobile.
+ * Landing hero: headline, supporting copy, primary/secondary CTAs, and a
+ * lightweight static atom illustration alongside. Two-column on large screens,
+ * stacked on mobile. Sits on true black — no animated background layer.
  *
  * Content rises in on a short staggered cascade (see `.reveal` + per-element
  * `animationDelay`). The headline text matches APP_TAGLINE verbatim, but is
@@ -14,17 +14,6 @@ import { ChevronRight } from "@/components/ui/Icon";
 export function HeroSection() {
   return (
     <section className="page-shell relative grid items-center gap-8 pt-14 pb-10 lg:grid-cols-2 lg:gap-10 lg:pt-20 lg:pb-16">
-      {/* Soft dark scrim behind the copy so text stays legible over the
-          animated field, fading out toward the atom side. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-0 -z-[1] lg:right-1/3"
-        style={{
-          background:
-            "radial-gradient(120% 90% at 20% 40%, rgba(0,0,0,0.72), rgba(0,0,0,0.35) 45%, transparent 75%)",
-        }}
-      />
-
       <div className="text-center lg:text-left">
         <span
           className="reveal hero-eyebrow inline-block text-xs font-semibold uppercase"
@@ -64,7 +53,7 @@ export function HeroSection() {
           </Link>
           <Link
             href="/learn"
-            className="cta-secondary inline-flex w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-foreground backdrop-blur hover:border-white/30 hover:bg-white/10 sm:w-auto"
+            className="cta-secondary inline-flex w-full items-center justify-center rounded-xl border border-white/15 bg-white/5 px-7 py-3.5 text-sm font-semibold text-foreground hover:border-white/30 hover:bg-white/10 sm:w-auto sm:backdrop-blur"
           >
             Start Learning
           </Link>
@@ -75,7 +64,7 @@ export function HeroSection() {
         className="reveal flex justify-center"
         style={{ animationDelay: "0.25s" }}
       >
-        <LivingAtom />
+        <AtomPreview />
       </div>
     </section>
   );

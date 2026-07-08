@@ -12,20 +12,29 @@
   --color-space-950: #000000;
   --color-space-900: #050505;
   --color-space-800: #0a0a0c;
+
+  /* Solid, near-black instrument surfaces (mobile-safe, no blur needed). */
+  --color-surface-1: #0a0a0b;
+  --color-surface-2: #111113;
+  --color-surface-3: #18181b;
+
   --color-surface: rgba(255, 255, 255, 0.045);
   --color-surface-strong: rgba(255, 255, 255, 0.075);
-  --color-border-subtle: rgba(255, 255, 255, 0.12);
-  --color-border-strong: rgba(255, 255, 255, 0.18);
+  --color-border-subtle: rgba(255, 255, 255, 0.1);
+  --color-border-strong: rgba(255, 255, 255, 0.16);
 
-  --color-accent: #0a84ff;
+  /* Blue is the single interaction accent; cyan reads as scientific energy;
+     violet is reserved for rare quantum/orbital hints. */
+  --color-accent: #2997ff;
+  --color-accent-deep: #0066cc;
   --color-accent-cyan: #64d2ff;
   --color-accent-violet: #bf5af2;
-  --color-accent-pink: #ff375f;
+  --color-accent-pink: #ff5f7e;
 
   --color-foreground: #f5f5f7;
   --color-secondary: #d2d2d7;
-  --color-muted: #a1a1aa;
-  --color-muted-2: #71717a;
+  --color-muted: #8e8e93;
+  --color-muted-2: #636366;
 
   --color-success: #30d158;
   --color-warning: #ff9f0a;
@@ -107,6 +116,32 @@
 @keyframes shimmer {
   to {
     background-position: 200% center;
+  }
+}
+
+/*
+ * Static hero atom (see home/AtomPreview). Crisp SVG rings and dots — no canvas,
+ * no rAF. The nucleus halo breathes once, slowly, on desktop only; on mobile and
+ * under reduced motion it holds perfectly still.
+ */
+@keyframes atom-glow-pulse {
+  0%,
+  100% {
+    opacity: 0.5;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: scale(1.05);
+  }
+}
+.atom-preview-glow {
+  transform-origin: center;
+  opacity: 0.6;
+}
+@media (min-width: 769px) and (prefers-reduced-motion: no-preference) {
+  .atom-preview-glow {
+    animation: atom-glow-pulse 4.5s ease-in-out infinite;
   }
 }
 
@@ -219,7 +254,7 @@
   );
   border: 1px solid transparent;
   border-radius: 1rem;
-  backdrop-filter: blur(22px);
+  backdrop-filter: blur(14px);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.1),
     0 12px 40px -24px rgba(0, 0, 0, 0.9);
@@ -341,19 +376,29 @@
 /* Plain aliases for inline styles and non-Tailwind consumers. */
 :root {
   --background: #000000;
+  --background-soft: #050505;
   --foreground: #f5f5f7;
-  --muted: #a1a1aa;
-  --muted-2: #71717a;
-  --surface-1: rgba(255, 255, 255, 0.045);
-  --surface-2: rgba(255, 255, 255, 0.075);
-  --border-subtle: rgba(255, 255, 255, 0.12);
-  --border-strong: rgba(255, 255, 255, 0.18);
-  --blue: #0a84ff;
+  --text-primary: #f5f5f7;
+  --text-secondary: #d2d2d7;
+  --text-tertiary: #8e8e93;
+  --text-muted: #636366;
+  --muted: #8e8e93;
+  --muted-2: #636366;
+  --surface-1: #0a0a0b;
+  --surface-2: #111113;
+  --surface-3: #18181b;
+  --border-subtle: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.16);
+  --blue: #2997ff;
+  --blue-deep: #0066cc;
   --cyan: #64d2ff;
   --violet: #bf5af2;
   --green: #30d158;
   --orange: #ff9f0a;
   --red: #ff453a;
+  --proton: #ff5f7e;
+  --neutron: #5ac8fa;
+  --electron: #64d2ff;
 }
 
 @keyframes orbit {
@@ -399,36 +444,63 @@ h4 {
   letter-spacing: -0.01em;
 }
 
+/* True-black instrument backgrounds. `.oled-bg` is flat black; `.oled-bg-depth`
+   adds one restrained blue bloom at the top. Both are cheap, static paints. */
+.oled-bg {
+  background: #000000;
+}
+.oled-bg-depth {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(41, 151, 255, 0.1), transparent 34%),
+    radial-gradient(circle at 80% 20%, rgba(100, 210, 255, 0.035), transparent 28%),
+    #000000;
+}
+@media (max-width: 768px) {
+  .oled-bg-depth {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(41, 151, 255, 0.055), transparent 30%),
+      #000000;
+  }
+}
+
 /**
- * OLED page backdrop: true black with a single, very subtle blue bloom behind
- * the top of the content. Fixed so it stays put while content scrolls.
+ * OLED page backdrop: true black with a single restrained blue bloom behind the
+ * top of the content. Fixed so it stays put while content scrolls. The starfield
+ * is a static, barely-there paint (no animation) and is dropped entirely on
+ * mobile to keep the compositor idle.
  */
 .app-backdrop {
   position: fixed;
   inset: 0;
   z-index: -1;
   background:
-    radial-gradient(
-      90rem 42rem at 50% -14%,
-      rgba(10, 132, 255, 0.07),
-      transparent 65%
-    ),
+    radial-gradient(circle at 50% 0%, rgba(41, 151, 255, 0.1), transparent 34%),
+    radial-gradient(circle at 80% 20%, rgba(100, 210, 255, 0.035), transparent 28%),
     #000000;
 }
 
-/* Barely-there starfield — depth, not decoration. */
+/* Barely-there static starfield — depth, not decoration. Desktop only. */
 .app-backdrop::after {
   content: "";
   position: absolute;
   inset: 0;
   background-image:
-    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.4), transparent),
-    radial-gradient(1px 1px at 70% 60%, rgba(255, 255, 255, 0.28), transparent),
-    radial-gradient(1px 1px at 40% 80%, rgba(255, 255, 255, 0.32), transparent),
-    radial-gradient(1px 1px at 85% 25%, rgba(255, 255, 255, 0.24), transparent);
-  background-size: 280px 280px;
-  /* Atmosphere, not texture: barely perceptible so content stays the subject. */
-  opacity: 0.1;
+    radial-gradient(1px 1px at 20% 30%, rgba(255, 255, 255, 0.32), transparent),
+    radial-gradient(1px 1px at 70% 60%, rgba(255, 255, 255, 0.22), transparent),
+    radial-gradient(1px 1px at 40% 80%, rgba(255, 255, 255, 0.26), transparent),
+    radial-gradient(1px 1px at 85% 25%, rgba(255, 255, 255, 0.2), transparent);
+  background-size: 320px 320px;
+  opacity: 0.07;
+}
+@media (max-width: 768px) {
+  .app-backdrop {
+    background:
+      radial-gradient(circle at 50% 0%, rgba(41, 151, 255, 0.055), transparent 30%),
+      #000000;
+  }
+  .app-backdrop::after {
+    display: none;
+  }
 }
 
 /**
@@ -449,11 +521,11 @@ h4 {
     rgba(255, 255, 255, 0.075),
     rgba(255, 255, 255, 0.035)
   );
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
     0 24px 80px rgba(0, 0, 0, 0.45);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(14px);
 }
 
 /* Quieter variant for secondary surfaces. */
@@ -461,7 +533,28 @@ h4 {
   background: rgba(255, 255, 255, 0.035);
   border: 1px solid rgba(255, 255, 255, 0.08);
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
-  backdrop-filter: blur(16px);
+  backdrop-filter: blur(12px);
+}
+
+/* Mobile-friendly premium card: solid near-black, hairline border, no blur or
+   shadow. Use anywhere backdrop-filter is unnecessary. */
+.panel-solid {
+  background: #0a0a0b;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: none;
+}
+
+/* Below the tablet breakpoint, swap every frosted surface for a solid
+   near-black panel: backdrop-filter and large drop-shadows are the biggest
+   mobile compositor cost, and true black reads more premium on OLED anyway. */
+@media (max-width: 768px) {
+  .glass-panel,
+  .glass-panel-subtle {
+    background: #0a0a0b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: none;
+    backdrop-filter: none;
+  }
 }
 
 /*
@@ -524,8 +617,46 @@ h4 {
 }
 
 .segment[data-active="true"] {
-  background: rgba(10, 132, 255, 0.85);
+  background: rgba(41, 151, 255, 0.9);
   color: #ffffff;
+}
+
+/* ---------------------------------------------------------------------------
+ * Mobile performance layer (< 768px).
+ *
+ * Phones can't afford the desktop's blur, colored glows, and animated pseudo
+ * elements. Below the tablet breakpoint we strip decorative GPU cost: the
+ * feature cards become solid panels, the CTA loses its animated blurred halo,
+ * and the headline gradient stops shimmering. Nothing structural changes.
+ * ------------------------------------------------------------------------- */
+@media (max-width: 768px) {
+  .feature-card {
+    background: #0a0a0b;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    backdrop-filter: none;
+    box-shadow: none;
+  }
+  .feature-card::before,
+  .feature-card::after {
+    display: none;
+  }
+  .feature-card:hover {
+    transform: none;
+    box-shadow: none;
+  }
+  /* Drop the blurred, pulsing halo behind the primary CTA — keep the button. */
+  .cta-primary::before {
+    display: none;
+  }
+  .cta-primary,
+  .cta-primary:hover {
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+    transform: none;
+  }
+  /* Static gradient words — no continuous background-position animation. */
+  .hero-accent {
+    animation: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
