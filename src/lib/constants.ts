@@ -22,8 +22,12 @@ export interface NavLink {
 export const NAV_LINKS: NavLink[] = [
   { label: "Elements", href: "/elements" },
   { label: "Learn", href: "/learn" },
+  { label: "Origins", href: "/origins" },
   { label: "Compare", href: "/compare" },
 ];
+
+/** Shared label for links into the /origins story, used across several pages. */
+export const ORIGINS_CTA_LABEL = "Discover Element Origins";
 
 export interface FeatureCard {
   title: string;

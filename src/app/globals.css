@@ -659,6 +659,179 @@ h4 {
   }
 }
 
+/* ---------------------------------------------------------------------------
+ * Origins story (/origins).
+ *
+ * A long-form scroll with no canvas and no animation loop. Everything here is a
+ * static paint plus one cheap opacity/transform transition per section. The
+ * palette maps each nucleosynthesis channel to a single accent, exposed as
+ * `--origin-accent` so chips, swatches, rules, and glows all read from one
+ * value instead of repeating hex codes at 118 call sites.
+ * ------------------------------------------------------------------------- */
+
+.origin-src-big-bang {
+  --origin-accent: #64d2ff;
+  --origin-tint: rgba(100, 210, 255, 0.13);
+}
+.origin-src-cosmic-ray-spallation {
+  --origin-accent: #ff5f7e;
+  --origin-tint: rgba(255, 95, 126, 0.13);
+}
+.origin-src-stellar-fusion {
+  --origin-accent: #2997ff;
+  --origin-tint: rgba(41, 151, 255, 0.14);
+}
+.origin-src-supernova {
+  --origin-accent: #ff9f0a;
+  --origin-tint: rgba(255, 159, 10, 0.13);
+}
+.origin-src-neutron-star-merger {
+  --origin-accent: #bf5af2;
+  --origin-tint: rgba(191, 90, 242, 0.14);
+}
+.origin-src-human-synthesis {
+  --origin-accent: #98989d;
+  --origin-tint: rgba(152, 152, 157, 0.13);
+}
+.origin-src-multiple {
+  --origin-accent: #a9c9ff;
+  --origin-tint: rgba(169, 201, 255, 0.1);
+}
+
+/* Section reveal. Desktop only: on phones the sections are painted in place so
+   scrolling never waits on a compositor pass. */
+.origin-reveal {
+  opacity: 0;
+  transform: translateY(22px);
+  transition:
+    opacity 0.75s var(--ease-spring),
+    transform 0.75s var(--ease-spring);
+}
+.origin-reveal.is-visible {
+  opacity: 1;
+  transform: none;
+}
+@media (max-width: 768px) {
+  .origin-reveal,
+  .origin-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}
+
+/* One element chip in the origin map. Colored entirely by the inherited
+   `--origin-accent`, so the grid is a single style rule, not 118. */
+.origin-chip {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 1;
+  border-radius: 5px;
+  background: var(--origin-tint);
+  border: 1px solid color-mix(in srgb, var(--origin-accent) 32%, transparent);
+  color: var(--origin-accent);
+  font-weight: 600;
+  line-height: 1;
+  transition:
+    background-color 0.18s ease,
+    border-color 0.18s ease,
+    color 0.18s ease,
+    opacity 0.18s ease;
+}
+.origin-chip:hover,
+.origin-chip:focus-visible {
+  background: color-mix(in srgb, var(--origin-accent) 28%, transparent);
+  border-color: var(--origin-accent);
+  color: #ffffff;
+  outline: none;
+}
+.origin-chip:focus-visible {
+  box-shadow: 0 0 0 2px #000, 0 0 0 4px var(--origin-accent);
+}
+.origin-chip[data-active="true"] {
+  border-color: var(--origin-accent);
+  color: #ffffff;
+  background: color-mix(in srgb, var(--origin-accent) 30%, transparent);
+}
+.origin-chip[data-dimmed="true"] {
+  opacity: 0.16;
+}
+
+/* The large element badge in the readout panel. Shares the chip's palette but
+   not its geometry or hover behaviour — it isn't a control. Declared as its own
+   class because `.origin-chip` is defined after Tailwind's utilities and would
+   win the cascade against a `rounded-xl` override. */
+.origin-badge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background: var(--origin-tint);
+  border: 1px solid color-mix(in srgb, var(--origin-accent) 32%, transparent);
+  color: var(--origin-accent);
+  font-weight: 600;
+}
+
+/* Legend / filter pill. Same accent inheritance as the chips. */
+.origin-pill {
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: #0a0a0b;
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+}
+.origin-pill:hover,
+.origin-pill:focus-visible {
+  border-color: color-mix(in srgb, var(--origin-accent) 55%, transparent);
+  outline: none;
+}
+.origin-pill[aria-pressed="true"] {
+  border-color: var(--origin-accent);
+  background: var(--origin-tint);
+}
+.origin-swatch {
+  background: var(--origin-accent);
+}
+.origin-accent-text {
+  color: var(--origin-accent);
+}
+
+/* Hero backdrop: one radial bloom over true black, with a barely-there star
+   field. Both are static paints; the field is dropped on phones. */
+.origin-hero-glow {
+  background:
+    radial-gradient(
+      44rem 30rem at 50% 8%,
+      rgba(41, 151, 255, 0.16),
+      transparent 68%
+    ),
+    radial-gradient(
+      28rem 20rem at 78% 34%,
+      rgba(100, 210, 255, 0.07),
+      transparent 70%
+    );
+}
+.origin-stars::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 22%, rgba(255, 255, 255, 0.5), transparent),
+    radial-gradient(1px 1px at 63% 14%, rgba(255, 255, 255, 0.35), transparent),
+    radial-gradient(1px 1px at 34% 71%, rgba(255, 255, 255, 0.4), transparent),
+    radial-gradient(1px 1px at 88% 58%, rgba(255, 255, 255, 0.3), transparent),
+    radial-gradient(1px 1px at 74% 86%, rgba(255, 255, 255, 0.28), transparent);
+  background-size: 280px 280px;
+  opacity: 0.09;
+  pointer-events: none;
+}
+@media (max-width: 768px) {
+  .origin-stars::after {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -673,7 +846,8 @@ h4 {
      opacity:0; with those disabled they must be shown immediately instead of
      staying invisible. */
   .reveal,
-  .reveal-scroll {
+  .reveal-scroll,
+  .origin-reveal {
     opacity: 1;
     transform: none;
   }

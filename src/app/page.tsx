@@ -1,5 +1,6 @@
 import { HeroSection } from "@/components/home/HeroSection";
 import { FeatureCards } from "@/components/home/FeatureCards";
+import { OriginsCta } from "@/components/origins/OriginsCta";
 
 /**
  * Homepage. Deliberately lightweight: true-black OLED backdrop (see
@@ -12,6 +13,9 @@ export default function HomePage() {
     <div className="relative z-10">
       <HeroSection />
       <FeatureCards />
+      <section className="page-shell pb-20 lg:pb-28">
+        <OriginsCta />
+      </section>
     </div>
   );
 }

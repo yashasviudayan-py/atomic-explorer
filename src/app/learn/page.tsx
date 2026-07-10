@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { LearnHub } from "@/components/learn/LearnHub";
+import { OriginsCta } from "@/components/origins/OriginsCta";
 
 export const metadata: Metadata = {
   title: "Learn",
@@ -41,6 +42,11 @@ export default function LearnPage() {
       {/* Progress + course map */}
       <div className="mt-10">
         <LearnHub />
+      </div>
+
+      {/* Where the elements themselves came from. */}
+      <div className="page-shell mt-12">
+        <OriginsCta description="Once you know what atoms are made of, find out where they were made — from the Big Bang to neutron star collisions." />
       </div>
     </div>
   );

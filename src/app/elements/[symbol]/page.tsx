@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ELEMENTS, getElementBySymbol } from "@/data/elements";
+import { getOriginBySymbol, ORIGIN_CATEGORY_BY_ID } from "@/data/elementOrigins";
 import { CATEGORY_META } from "@/lib/elementCategories";
 import { AtomViewerClient } from "@/components/atom/AtomViewerClient";
+import { OriginsCta } from "@/components/origins/OriginsCta";
 import { ChevronLeft } from "@/components/ui/Icon";
 
 interface ElementDetailPageProps {
@@ -42,6 +44,7 @@ export default async function ElementDetailPage({
 
   const meta = CATEGORY_META[element.category];
   const { properties } = element;
+  const origin = getOriginBySymbol(element.symbol);
 
   return (
     <article className="page-shell relative py-10 lg:py-14">
@@ -220,6 +223,32 @@ export default async function ElementDetailPage({
           </p>
         </div>
       </section>
+
+      {/* Cosmic origin — the element's entry in the simplified origin map. */}
+      {origin && (
+        <section className="mt-8">
+          <SectionHeading
+            eyebrow="Cosmic origin"
+            title={`Where ${element.name} comes from`}
+            accent={meta.accent}
+          />
+          <div className="glass-panel-subtle mt-5 rounded-2xl p-5">
+            <p className="text-sm font-medium text-foreground">
+              {ORIGIN_CATEGORY_BY_ID[origin.primarySource].label}
+            </p>
+            <p className="mt-2 text-sm leading-relaxed text-secondary">
+              {origin.explanation}
+            </p>
+            <p className="mt-3 text-xs leading-relaxed text-muted">
+              Simplified origin map — many elements form through more than one
+              astrophysical pathway.
+            </p>
+            <div className="mt-4">
+              <OriginsCta variant="inline" />
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* Summary / properties */}
       <section className="glass-panel-subtle mt-8 rounded-2xl p-5">
